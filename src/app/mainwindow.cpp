@@ -28,8 +28,6 @@ namespace ae {
     }
 
 
-
-
     void MainWindow::keyPressEvent(QKeyEvent *keyEvent) {
       if(!keyEvent->isAutoRepeat()){
           QWidget::keyPressEvent(keyEvent);

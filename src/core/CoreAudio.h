@@ -21,7 +21,7 @@ namespace ae {
         static int32_t SamplingFrequency;
 
     public:
-        static cycledBuffer testData;
+        static monoBuffer testData;
         static PaStream * stream;
 
         static PaError init();

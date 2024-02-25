@@ -12,7 +12,9 @@ namespace ae {
 
     int32_t CoreAudio::SamplingFrequency = 48000;
     PaStream * CoreAudio::stream = nullptr;
-    cycledBuffer CoreAudio::testData = {nullptr, 0, 0};
+    monoBuffer CoreAudio::testData = {nullptr, 0, 0};
+
+
 
     PaError CoreAudio::init() {
         srand(time(nullptr));
@@ -22,35 +24,29 @@ namespace ae {
             return err;
         }
 
-        CoreAudio::testData.buffer = new Sample [128000];
+        CoreAudio::testData.buffer = new Sample [32000];
         double arg = 0.0;
         double step = 1.0 / SamplingFrequency;
-        double angFreq = 2 * M_PI * 140;
+        double angFreq = 2 * M_PI * 700;
         int32_t ampl = 1 << 30;
 
-        for(int i = 0; i < 128000; ++i){
+        for(int i = 0; i < 32000; ++i){
             testData.buffer[i] = sin(angFreq * arg);
             //std::cerr << testData.buffer[i] << '\n';
             arg += step;
         }
-        CoreAudio::testData.bufferSize = 128000;
+        CoreAudio::testData.bufferSize = 32000;
         CoreAudio::testData.current = 0;
 
 
         err = Pa_OpenDefaultStream(&stream,
-                             0,          /* no input channels */
-                             2,          /* stereo output */
-                             paFloat32,  /* 32 bit floating point output */
-                             SamplingFrequency,
-                             128,        /* frames per buffer, i.e. the number
-                                                   of sample frames that PortAudio will
-                                                   request from the callback. Many apps
-                                                   may want to use
-                                                   paFramesPerBufferUnspecified, which
-                                                   tells PortAudio to pick the best,
-                                                   possibly changing, buffer size.*/
-                             &paCycleCallback , /* this is your callback function */
-                             &testData );
+                             0,
+                            1,
+                            paFloat32,
+                            SamplingFrequency,
+                             256,
+                             &paCycleCallback,
+                             &testData);
         if(err != paNoError){
             std::cerr << Pa_GetErrorText(err);
             return err;

@@ -7,28 +7,35 @@
 
 #include "stdint.h"
 
-    enum Notes{
-        C = 0,
-        Cs,
-        D,
-        Ds,
-        E,
-        F,
-        Fs,
-        G,
-        Gs,
-        A,
-        As,
-        H
-    };
+enum Note {
+    C = 0,
+    Cs,
+    D,
+    Ds,
+    E,
+    F,
+    Fs,
+    G,
+    Gs,
+    A,
+    As,
+    H
+};
 
-    typedef float Sample;
+typedef float Sample;
 
 typedef struct {
-    Sample * buffer;
+    Sample *buffer;
     long long current;
     long long bufferSize;
-} cycledBuffer;
+} monoBuffer;
+
+double getNoteFrequency(unsigned short octave, Note note){
+
+}
+
+
+
 
 
 #endif //AEDIT_COREINFO_H

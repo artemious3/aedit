@@ -10,9 +10,9 @@ int paCycleCallback( const void *inputBuffer, void *outputBuffer,
                      PaStreamCallbackFlags statusFlags,
                      void *userData)
 {
-    (void) inputBuffer;;
+    (void) inputBuffer;
 
-    cycledBuffer * data = (cycledBuffer*)userData;
+    monoBuffer * data = (monoBuffer*)userData;
     Sample * output = (Sample*) outputBuffer;
 
     unsigned long remainingInBuffer = data->bufferSize - data->current;

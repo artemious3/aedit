@@ -5,11 +5,9 @@
 #ifndef AEDIT_COREINFO_H
 #define AEDIT_COREINFO_H
 
-#include <Qt>
+#include "stdint.h"
 
-
-namespace ae{
-    enum class Notes{
+    enum Notes{
         C = 0,
         Cs,
         D,
@@ -24,11 +22,13 @@ namespace ae{
         H
     };
 
+    typedef float Sample;
 
-}
-
-
-
+typedef struct {
+    Sample * buffer;
+    long long current;
+    long long bufferSize;
+} cycledBuffer;
 
 
 #endif //AEDIT_COREINFO_H

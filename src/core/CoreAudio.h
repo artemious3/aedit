@@ -6,21 +6,28 @@
 #define AEDIT_COREAUDIO_H
 
 #include <cstdlib>
+#include "CoreInfo.h"
+#include <portaudio.h>
+
+extern "C" int paCycleCallback( const void *inputBuffer, void *outputBuffer,
+                            unsigned long framesPerBuffer,
+                            const PaStreamCallbackTimeInfo* timeInfo,
+                            PaStreamCallbackFlags statusFlags,
+                            void *userData);
 
 namespace ae {
 
-    enum class AudioType{
-        Float,
-        Int8,
-        Int16,
-        Int32
-    };
-
     class CoreAudio {
-
         static int32_t SamplingFrequency;
-        static
 
+    public:
+        static cycledBuffer testData;
+        static PaStream * stream;
+
+        static PaError init();
+        static PaError terminate();
+        static PaError startPlayback();
+        static PaError stopPlayback();
     };
 
 } // ae

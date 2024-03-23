@@ -7,7 +7,9 @@
 
 #include "stdint.h"
 
-enum Note {
+typedef float Sample;
+
+typedef enum {
     C = 0,
     Cs,
     D,
@@ -20,9 +22,7 @@ enum Note {
     A,
     As,
     H
-};
-
-typedef float Sample;
+} Note;
 
 typedef struct {
     Sample *buffer;
@@ -30,7 +30,9 @@ typedef struct {
     long long bufferSize;
 } monoBuffer;
 
-double getNoteFrequency(unsigned short octave, Note note){
+
+
+float getNoteFrequency(unsigned short octave, Note note){
 
 }
 

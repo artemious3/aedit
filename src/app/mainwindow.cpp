@@ -17,6 +17,7 @@ namespace ae {
             QWidget(parent), ui(new Ui::MainWindow) {
       ui->setupUi(this);
       PaError err = CoreAudio::init();
+      CoreAudio::initializeTestStream();
       if(err != paNoError){
           qDebug() << Pa_GetErrorText(err);
       }

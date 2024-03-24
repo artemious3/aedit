@@ -20,17 +20,17 @@ find_package(Qt6 COMPONENTS
 
 add_subdirectory(lib/portaudio bin EXCLUDE_FROM_ALL)
 
-include_directories(src/core)
+include_directories(src/core/core-audio)
 include_directories(src/app)
 
 add_executable(aedit src/main.cpp
         src/app/mainwindow.cpp
         src/app/mainwindow.h
         src/app/MainWindow.ui
-        src/core/CoreInfo.h
-        src/core/CoreAudio.cpp
-        src/core/CoreAudio.h
-        src/core/pa_callback.c
+        src/core/core-audio/CoreInfo.h
+        src/core/core-audio/CoreAudio.cpp
+        src/core/core-audio/CoreAudio.h
+        src/core/core-audio/pa_callback.c
 )
 
 

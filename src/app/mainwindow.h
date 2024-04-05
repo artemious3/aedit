@@ -9,6 +9,9 @@
 #include <QAudio>
 #include <QAudioFormat>
 #include <QAudioSink>
+#include <QAudioDecoder>
+#include <qaudiodecoder.h>
+#include "TimelineScene.h"
 
 
 
@@ -27,7 +30,10 @@ namespace ae {
         ~MainWindow() override;
 
 
-    private:
+      private:
+        TimelineScene *tlScene;
+        QAudioDecoder *decoder;
+        QVector<float> samples;
 
         bool isPressed = false;
         void keyPressEvent(QKeyEvent* keyEvent);
@@ -35,6 +41,14 @@ namespace ae {
         Ui::MainWindow *ui;
         void playStart();
         void playStop();
+
+
+
+      public slots:
+        void openFile();
+        void onBufReady();
+        void onBufFinished();
+        void onError(QAudioDecoder::Error err );
     };
 } // ae
 

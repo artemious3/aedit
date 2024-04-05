@@ -3,6 +3,7 @@
 //
 
 #include "CoreAudio.h"
+#include "coretypes.h"
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -45,9 +46,8 @@ int32_t CoreAudio::BytesPerCallback = 64;
         }
 
         auto err = Pa_Terminate();
-        delete[] stereoStream.leftBuffer;
-        delete[] stereoStream.rightBuffer;
-
+        delete[] stereoStream.left;
+        delete[] stereoStream.right;
         return err;
     }
 
@@ -61,20 +61,26 @@ int32_t CoreAudio::BytesPerCallback = 64;
     }
 
     void CoreAudio::initializeTestStream() {
-        CoreAudio::stereoStream.leftBuffer = new Sample [32000];
-        CoreAudio::stereoStream.rightBuffer = new Sample [32000];
+        CoreAudio::stereoStream.left = new Sample [TEST_BUF_SZ];
+        CoreAudio::stereoStream.right = new Sample [TEST_BUF_SZ];
         double arg = 0.0;
         double step = 1.0 / SamplingFrequency;
         double angFreq = 2 * M_PI * 700;
         //int32_t ampl = 1 << 30;
 
-        for(int i = 0; i < 32000; ++i){
-            stereoStream.leftBuffer[i] = sin(angFreq * arg);
-            stereoStream.rightBuffer[i] = sin(angFreq * arg);
+        for(int i = 0; i < TEST_BUF_SZ; ++i){
+            stereoStream.left[i] = sin(angFreq * arg);
+            stereoStream.right[i] = sin(angFreq * arg);
             //std::cerr << stereoStream.buffer[i] << '\n';
             arg += step;
         }
-        CoreAudio::stereoStream.bufferSize = 32000;
+        CoreAudio::stereoStream.size = TEST_BUF_SZ;
         CoreAudio::stereoStream.current = 0;
     }
-} // ae
+    } // namespace ae
+    void ae::CoreAudio::setBuffer(StereoAudioBuffer buffer) {
+        delete[] stereoStream.left;
+        delete[] stereoStream.right;
+        stereoStream = buffer;
+    
+}

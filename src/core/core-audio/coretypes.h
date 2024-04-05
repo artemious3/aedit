@@ -5,23 +5,17 @@
 #ifndef AEDIT_CORETYPES_H
 #define AEDIT_CORETYPES_H
 
-#include "stdint.h"
+#include <stdbool.h>
 
 typedef float Sample;
 
 typedef struct {
-    Sample *buffer;
+    Sample * left;
+    Sample * right;
     long long current;
-    long long bufferSize;
-} MonoAudioBuffer;
-
-typedef struct {
-    Sample * leftBuffer;
-    Sample * rightBuffer;
-    long long current;
-    long long bufferSize;
+    long long size;
+    bool isStereo;
 } StereoAudioBuffer;
-
 
 
 #endif //AEDIT_CORETYPES_H

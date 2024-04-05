@@ -10,11 +10,11 @@
 #include "coretypes.h"
 #include <portaudio.h>
 
-extern "C" int paCycleCallback( const void *inputBuffer, void *outputBuffer,
-                            unsigned long framesPerBuffer,
-                            const PaStreamCallbackTimeInfo* timeInfo,
-                            PaStreamCallbackFlags statusFlags,
-                            void *userData);
+// extern "C" int paCycleCallback( const void *inputBuffer, void *outputBuffer,
+//                             unsigned long framesPerBuffer,
+//                             const PaStreamCallbackTimeInfo* timeInfo,
+//                             PaStreamCallbackFlags statusFlags,
+//                             void *userData);
 
 extern "C" int paUsualCallback( const void *inputBuffer, void *outputBuffer,
                                 unsigned long framesPerBuffer,
@@ -24,7 +24,8 @@ extern "C" int paUsualCallback( const void *inputBuffer, void *outputBuffer,
 
 namespace ae {
 
-    class CoreAudio {
+class CoreAudio {
+  static const int32_t TEST_BUF_SZ = 32000;
       static int32_t SamplingFrequency;
       static int32_t BytesPerCallback;
 
@@ -36,6 +37,7 @@ namespace ae {
         static PaError terminate();
         static PaError startPlayback();
         static PaError stopPlayback();
+        static void setBuffer(StereoAudioBuffer buffer);
         static void initializeTestStream();
     };
 

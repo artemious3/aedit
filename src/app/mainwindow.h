@@ -12,6 +12,7 @@
 #include <QAudioDecoder>
 #include <qaudiodecoder.h>
 #include "TimelineScene.h"
+#include "loader.h"
 
 
 
@@ -29,25 +30,24 @@ namespace ae {
         explicit MainWindow(QWidget *parent = nullptr);
         ~MainWindow() override;
 
-
       private:
         TimelineScene *tlScene;
-        QAudioDecoder *decoder;
-        QVector<float> samples;
+
+        Loader* loader;
 
         bool isPressed = false;
-        void keyPressEvent(QKeyEvent* keyEvent);
-        void keyReleaseEvent(QKeyEvent* keyEvent);
+        // void keyPressEvent(QKeyEvent* keyEvent);
+        // void keyReleaseEvent(QKeyEvent* keyEvent);
         Ui::MainWindow *ui;
-        void playStart();
-        void playStop();
-
-
 
       public slots:
         void openFile();
         void onBufReady();
-        void onBufFinished();
+
+        void on_playBtn_clicked();
+        void on_pauseBtn_clicked();
+        void on_stopBtn_clicked();
+
         void onError(QAudioDecoder::Error err );
     };
 } // ae

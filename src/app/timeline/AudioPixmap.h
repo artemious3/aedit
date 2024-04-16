@@ -5,9 +5,11 @@
 
 class AudioPixmap : public QPixmap{
 private:
-  const Sample* sample;
-  int size;
+  const Sample* buffer;
+  int bufferSize;
+
   void drawWaveform(int beg, int end);
+  float getAverage(int beg, int end);
   QBrush brush;
 
 public:

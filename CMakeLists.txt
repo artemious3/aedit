@@ -23,6 +23,7 @@ add_subdirectory(lib/portaudio bin EXCLUDE_FROM_ALL)
 include_directories(src/core/core-audio)
 include_directories(src/app)
 include_directories(src/app/timeline)
+include_directories(src/effects)
 
 add_executable(aedit src/main.cpp
         src/app/mainwindow.cpp
@@ -35,6 +36,8 @@ add_executable(aedit src/main.cpp
         src/core/core-audio/CoreAudio.cpp
         src/core/core-audio/CoreAudio.h
         src/core/core-audio/pa_callback.c
+
+        src/app/loader.cpp
 )
 
 

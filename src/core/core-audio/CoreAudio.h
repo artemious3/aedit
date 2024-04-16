@@ -26,18 +26,26 @@ namespace ae {
 
 class CoreAudio {
   static const int32_t TEST_BUF_SZ = 32000;
-      static int32_t SamplingFrequency;
-      static int32_t BytesPerCallback;
+      
+
+        static StereoAudioBuffer buffer;
+        static PaStream * stream;
 
     public:
-        static StereoAudioBuffer stereoStream;
-        static PaStream * stream;
+      static int32_t SamplingFrequency;
+      static int32_t BytesPerCallback;
+        
 
         static PaError init();
         static PaError terminate();
-        static PaError startPlayback();
-        static PaError stopPlayback();
+
+        static PaError play();
+        static PaError stop();
+        static PaError pause();
+
         static void setBuffer(StereoAudioBuffer buffer);
+        static StereoAudioBuffer getBuffer();
+
         static void initializeTestStream();
     };
 

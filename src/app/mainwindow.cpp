@@ -6,6 +6,7 @@
 // "ui_MainWindow.h" resolved
 
 #include "mainwindow.h"
+#include "BaseEffect.h"
 #include "loader.h"
 #include "ui_MainWindow.h"
 #include <QAudioDecoder>
@@ -18,6 +19,7 @@
 #include <qpushbutton.h>
 #include "CoreAudio.h"
 #include "portaudio.h"
+#include "Constructor.h"
 
 namespace ae {
 MainWindow::MainWindow(QWidget *parent)
@@ -33,11 +35,12 @@ MainWindow::MainWindow(QWidget *parent)
   loader = new Loader;
 
   tlScene = new TimelineScene(ui->timeline);
-  tlScene->setBuffer(CoreAudio::getBuffer());
   ui->timeline->setSceneRect(0, 0, ui->timeline->frameSize().width(),
                              ui->timeline->frameSize().height());
   ui->timeline->setScene(tlScene);
   tlScene->drawWaveform();
+
+  on_gain_clicked();
 
   connect(ui->openFileBtn, &QPushButton::clicked, this, &MainWindow::openFile);
 
@@ -54,7 +57,6 @@ void MainWindow::onError(QAudioDecoder::Error err) { qDebug() << "error!"; }
 
 void MainWindow::onBufReady() {
     CoreAudio::setBuffer(loader->getResultingBuffer());
-    tlScene->setBuffer(loader->getResultingBuffer());
     tlScene->drawWaveform();
 }
 
@@ -84,15 +86,30 @@ void MainWindow::on_stopBtn_clicked(){
   CoreAudio::stop();
 }
 
+void MainWindow::on_gain_clicked(){
+  auto effect = Constructor::getEffect("EQ");
+  effect->setUpUi(ui->effectWidget);
+
+  connect(effect, &BaseEffect::modifiedBuffer, this, &MainWindow::onBufferChanged);
+}
+
 
 } // namespace ae
 
-void ae::MainWindow::MainWindow::openFile() {
+void ae::MainWindow::openFile() {
   QString fname =
-      QFileDialog::getOpenFileName(this, "Open file", "", "Music (*.mp3, *.wav)");
+      QFileDialog::getOpenFileName(this, "Open file", "", "Music (*.mp3)");
   if (fname.isEmpty()) {
     return;
   }
 
   loader->startDecoding(fname);
+}
+
+const TimelineScene* ae::MainWindow::getTimeline() {   
+  return tlScene; 
+}
+
+void ae::MainWindow::onBufferChanged() {
+  tlScene->drawWaveform();
 }

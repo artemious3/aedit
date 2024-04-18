@@ -32,8 +32,8 @@ namespace ae {
 
       private:
         TimelineScene *tlScene;
-
         Loader* loader;
+
 
         bool isPressed = false;
         // void keyPressEvent(QKeyEvent* keyEvent);
@@ -47,8 +47,15 @@ namespace ae {
         void on_playBtn_clicked();
         void on_pauseBtn_clicked();
         void on_stopBtn_clicked();
+        void on_gain_clicked();
 
         void onError(QAudioDecoder::Error err );
+
+        void onBufferChanged();
+
+      public:
+        const TimelineScene* getTimeline();
+
     };
 } // ae
 

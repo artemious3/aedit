@@ -9,10 +9,11 @@
 
 class Utils{
 
+public:
+typedef std::valarray<std::complex<float>> Frequencies;
+    
 
-    typedef std::valarray<std::complex<float>> Frequencies;
-
-
+private:
     static Frequencies _fft(const Frequencies& freqs){
         auto size = freqs.size();
         auto half_size = size / 2;
@@ -44,26 +45,31 @@ class Utils{
 
 
 public:
+
+
     static Frequencies fft(const Sample* buf, int size){
         Frequencies freqs;
+        
         freqs.resize(size);
         for(int i = 0; i < size; ++i){
             freqs[i] = buf[i];
         }
 
-        return _fft(freqs);;
+        return _fft(freqs);
     }
 
-    static void ifft(const Frequencies& freqs, Sample* out){
+    static void ifft_additive(const Frequencies& freqs, Sample* out, size_t max_len){
         Frequencies freqs_conj = freqs.apply(std::conj);
         freqs_conj = _fft(freqs_conj);
         freqs_conj = freqs_conj.apply(std::conj);
 
-        auto size = freqs_conj.size();
+        auto size = std::min(freqs_conj.size(), max_len);
+
         for(int i = 0; i < size; ++i){
-            out[i] = freqs_conj[i].real() / size;
+            out[i]  +=  freqs_conj[i].real() / size;
         }
     }
+
 
 };
 

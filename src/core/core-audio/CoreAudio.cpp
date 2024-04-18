@@ -42,7 +42,7 @@ namespace ae {
     }
 
     PaError CoreAudio::terminate() {
-        if(!stream){
+        if(stream){
             Pa_CloseStream(stream);
         }
 
@@ -73,10 +73,11 @@ namespace ae {
         double arg = 0.0;
         double step = 1.0 / SamplingFrequency;
         double angFreq = 2 * M_PI * 700;
+        double ampl = 1.0f;
 
         for(int i = 0; i < TEST_BUF_SZ; ++i){
-            buffer.left[i] = sin(angFreq * arg);
-            buffer.right[i] = sin(angFreq * arg);
+            buffer.left[i] = ampl * sin(angFreq * arg);
+            buffer.right[i] = ampl * sin(angFreq * arg);
             //std::cerr << stereoStream.buffer[i] << '\n';
             arg += step;
         }

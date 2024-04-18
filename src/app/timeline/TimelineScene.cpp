@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 #include <QPainter>
 #include <cstddef>
+#include <cstdio>
 #include <qcolor.h>
 #include <qdebug.h>
 #include <qgraphicsitem.h>
@@ -16,7 +17,7 @@
 
 
 TimelineScene::TimelineScene(QWidget *widget) : QGraphicsScene(widget) {
-  buffer = {nullptr, nullptr, 0, 0, false};
+  //buffer = {nullptr, nullptr, 0, 0, false};
   updater = new QTimer(this);
 
   connect(updater, &QTimer::timeout, this, &TimelineScene::updatePosPointer);
@@ -28,36 +29,37 @@ TimelineScene::~TimelineScene() {
   delete updater;
 }
 
-void TimelineScene::setBuffer(StereoAudioBuffer buffer_) {
-  buffer = buffer_;
-}
+// void TimelineScene::setBuffer(StereoAudioBuffer buffer_) {
+//   buffer = buffer_;
+// }
 
 void TimelineScene::drawWaveform() {
-  clear();
+  removeItem(leftPixmap);
+  removeItem(rightPixmap);
+
   viewWidth = views().first()->width();
   viewHeight = views().first()->height();
   posPointer = nullptr;
+
+  auto buffer = ae::CoreAudio::getBuffer();
   if (buffer.size == 0 || views().size() == 0) {
     qDebug() << "No buffer or no views";
     return;
   }
 
-  auto height = views().first()->height();
-  auto width = views().first()->width();
-
-  AudioPixmap leftWaveform(buffer.left, buffer.size, width, height / 2,
+  AudioPixmap leftWaveform(buffer.left, buffer.size, viewWidth, viewHeight/2,
                            LEFT_WAVEFORM_COLOR);
-  AudioPixmap rightWaveform(buffer.right, buffer.size, width, height / 2,
+  AudioPixmap rightWaveform(buffer.right, buffer.size, viewWidth, viewHeight/2,
                             RIGHT_WAVEFORM_COLOR);
 
-  QGraphicsPixmapItem *leftItem = new QGraphicsPixmapItem(leftWaveform);
-  QGraphicsPixmapItem *rightItem = new QGraphicsPixmapItem(rightWaveform);
+  leftPixmap = new QGraphicsPixmapItem(leftWaveform);
+  rightPixmap = new QGraphicsPixmapItem(rightWaveform);
 
-  leftItem->setPos(0, 0);
-  rightItem->setPos(0, height / 2);
+  leftPixmap->setPos(0, 0);
+  rightPixmap->setPos(0, viewHeight / 2);
 
-  addItem(leftItem);
-  addItem(rightItem);
+  addItem(leftPixmap);
+  addItem(rightPixmap);
 }
 
 void TimelineScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -108,4 +110,11 @@ void TimelineScene::updatePosPointer() {
   }
   
   posPointer->setPos( (float)cur/size * viewWidth, 0 );
+}
+
+std::pair<int, int> TimelineScene::getSelection() const {
+  auto bufSize = ae::CoreAudio::getBuffer().size;
+  int beg = ((double)selectionStart / leftPixmap->pixmap().width()) * bufSize;
+  int end = ((double)selectionEnd / leftPixmap->pixmap().width()) * bufSize;
+  return {beg, end};
 }

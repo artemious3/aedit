@@ -14,6 +14,7 @@ AudioPixmap::AudioPixmap(const Sample *sample, int sz, int width, int height,
   }
 
 void AudioPixmap::drawWaveform(int beg, int end) {
+
     fill(Qt::transparent);
     auto scale = height();
     auto step = (end-beg)/width();
@@ -25,7 +26,7 @@ void AudioPixmap::drawWaveform(int beg, int end) {
       auto higher_bound = std::min(bufferSize, i + step);
       auto average = getAverage(i, i + step);
       auto ampl = (float)average * scale;
-      painter.drawLine(x, middle - ampl, x, middle + ampl);
+      painter.drawLine(x, middle - ampl/2, x, middle + ampl/2);
     }  
 }
 

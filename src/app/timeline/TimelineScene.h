@@ -1,7 +1,6 @@
 #ifndef AEDIT_TIMELINESCENE_H
 #define AEDIT_TIMELINESCENE_H
 
-#include "coretypes.h"
 #include <QGraphicsScene>
 #include <qcontainerfwd.h>
 #include <qgraphicsitem.h>
@@ -11,6 +10,12 @@
 #include <qscopedpointer.h>
 #include <qvariant.h>
 #include <qwidget.h>
+
+
+enum class MouseBehaviour{
+  Selection,
+  Navigation
+};
 
 class TimelineScene : public QGraphicsScene {
   Q_OBJECT
@@ -34,12 +39,18 @@ private:
   int viewWidth = 0;
   int viewHeight = 0; 
 
+  MouseBehaviour mBehaviour = MouseBehaviour::Navigation;
+
 private slots:
   void updatePosPointer();
 
 protected:
   void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
   void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+
+  void selectionPress(QGraphicsSceneMouseEvent *event);
+  void selectionMove(QGraphicsSceneMouseEvent *event);
+  void navigate(QGraphicsSceneMouseEvent *event);
 
 public:
   TimelineScene(QWidget *widget = nullptr);
@@ -50,6 +61,8 @@ public:
   void drawSelection();
 
   std::pair<int, int> getSelection() const;
+
+  void setMouseBehaviour(MouseBehaviour mb);
 };
 
 #endif // AEDIT_TIMELINESCENE_H

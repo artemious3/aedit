@@ -30,7 +30,6 @@ protected slots:
 public:
     virtual void setUpUi(QWidget*);
 
-
 signals:
     void modifiedBuffer();
 };

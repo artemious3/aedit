@@ -15,7 +15,8 @@
 namespace ae {
 
     int32_t CoreAudio::SamplingFrequency = 48000;
-    int32_t CoreAudio::BytesPerCallback  = 64;
+    int32_t CoreAudio::FramesPerCallback  = 128;
+    bool CoreAudio::_isPlaying = false;
 
     PaStream * CoreAudio::stream = nullptr;
     StereoAudioBuffer CoreAudio::buffer = {nullptr, nullptr, 0, 0};
@@ -31,13 +32,13 @@ namespace ae {
                             2,
                             paFloat32,
                             SamplingFrequency,
-                             BytesPerCallback,
+                             FramesPerCallback,
                              &paUsualCallback,
                              &buffer);
 
         if(err != paNoError){
             std::cerr << Pa_GetErrorText(err);
-        }
+        }   
         return err;
     }
 
@@ -55,15 +56,18 @@ namespace ae {
     }
 
     PaError CoreAudio::play() {
+        //_isPlaying = true;
         return Pa_StartStream(stream);
     }
 
     PaError CoreAudio::stop() {
         buffer.current = 0;
+        _isPlaying = false;
         return Pa_StopStream(stream);
     }
 
     PaError CoreAudio::pause(){
+        _isPlaying = false;
         return Pa_StopStream(stream);
     }
 
@@ -88,6 +92,7 @@ namespace ae {
 
     } // namespace ae
     void ae::CoreAudio::setBuffer(StereoAudioBuffer buffer_) {
+        stop();
         if(buffer.left)
             delete[] buffer.left;
         if(buffer.right)
@@ -100,4 +105,15 @@ namespace ae {
 
 StereoAudioBuffer ae::CoreAudio::getBuffer() {
     return buffer;
+}
+
+void ae::CoreAudio::setCurrentIndex(size_t ind) {    
+    buffer.current = std::min((size_t)buffer.size, ind);
+}
+
+bool ae::CoreAudio::isPlaying() {
+    // std::cerr << "isplaying? : " << _isPlaying << '\n';
+    // std::cerr << "is active: " << Pa_IsStreamActive(stream) << '\n';
+    return Pa_IsStreamActive(stream);
+    
 }

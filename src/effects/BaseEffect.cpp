@@ -1,9 +1,12 @@
 #include "BaseEffect.h"
 #include <QFormLayout>
+#include <qalgorithms.h>
 #include <qgridlayout.h>
+#include <qmessagebox.h>
+#include <qnamespace.h>
 #include <qobject.h>
 #include <qpushbutton.h>
-
+#include <QMessageBox>
 #include "CoreAudio.h"
 #include "mainwindow.h"
 
@@ -14,8 +17,8 @@ void BaseEffect::setUpUi(QWidget* widget ) {
     layout = new QFormLayout(widget);
 
     applyBtn = new QPushButton("Apply",     widget);
-
     layout->insertRow(0, applyBtn);
+    applyBtn->setFocusPolicy(Qt::FocusPolicy::TabFocus);
 
     connect(applyBtn, &QPushButton::clicked, this, &BaseEffect::apply);
 }
@@ -26,7 +29,7 @@ void BaseEffect::apply(){
         return;
     }
 
-    auto window = qobject_cast<MainWindow*>(gui->parent()) ;
+    auto window = qobject_cast<MainWindow*>(gui->parent()->parent()->parent()) ;
     if(!window){
         qDebug() << "BaseEffect: Parent is not a window";
         return;
@@ -40,17 +43,23 @@ void BaseEffect::apply(){
 
     auto beg = sel.first;
     auto size = sel.second - sel.first;
+
+
+    if( size <= 1 ){
+        QMessageBox::information(window, "Info", "Select an audio area.");
+        return;
+    }
+
+
     auto max = buf.size - sel.first;
 
+    qDebug() << max << size;
     _process(&buf.left[ beg ], size, max);
-    _process(&buf.right[ beg    ], size, max);
+    _process(&buf.right[ beg ], size, max);
 
     emit modifiedBuffer();    
 }
 
 BaseEffect::~BaseEffect() {
-    applyBtn->deleteLater();
-    revertBtn->deleteLater();
-    saveBtn->deleteLater();
-    layout->deleteLater();    
+    qDeleteAll(gui->children());
 }

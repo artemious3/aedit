@@ -11,8 +11,11 @@
 #include <QAudioSink>
 #include <QAudioDecoder>
 #include <qaudiodecoder.h>
+#include <QMainWindow>
+#include "BaseEffect.h"
 #include "TimelineScene.h"
 #include "loader.h"
+
 
 
 
@@ -23,7 +26,7 @@ namespace ae {
     QT_END_NAMESPACE
 
 
-    class MainWindow : public QWidget {
+    class MainWindow : public QMainWindow {
     Q_OBJECT
 
     public:
@@ -33,21 +36,26 @@ namespace ae {
       private:
         TimelineScene *tlScene;
         Loader* loader;
-
+        BaseEffect* currentEffect = nullptr;
 
         bool isPressed = false;
-        // void keyPressEvent(QKeyEvent* keyEvent);
+        void keyPressEvent(QKeyEvent* keyEvent) override;
         // void keyReleaseEvent(QKeyEvent* keyEvent);
         Ui::MainWindow *ui;
 
       public slots:
-        void openFile();
+        void on_actionOpen_triggered();
         void onBufReady();
 
         void on_playBtn_clicked();
         void on_pauseBtn_clicked();
         void on_stopBtn_clicked();
-        void on_gain_clicked();
+        // void on_gain_clicked();
+
+        void on_effectsBox_textActivated(const QString& text);
+
+        void on_navButton_toggled(bool b);
+        void on_selButton_toggled(bool b);
 
         void onError(QAudioDecoder::Error err );
 

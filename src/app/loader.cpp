@@ -42,7 +42,7 @@ void Loader::finishReading() {
   resulting_buffer.left = new Sample[size / 2 + 1];
   resulting_buffer.right = new Sample[size / 2 + 1];
   size_t core_i = 0;
-  for (size_t i = 0; i < size;) {
+  for (size_t i = 0; i < size; ) {
 
     resulting_buffer.left[core_i] = tmpBuffer[i];
     ++i;

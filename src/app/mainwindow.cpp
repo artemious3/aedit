@@ -7,6 +7,7 @@
 
 #include "mainwindow.h"
 #include "BaseEffect.h"
+#include "TimelineScene.h"
 #include "loader.h"
 #include "ui_MainWindow.h"
 #include <QAudioDecoder>
@@ -16,6 +17,8 @@
 #include <qaudioformat.h>
 #include <qfiledialog.h>
 #include <qlogging.h>
+#include <qmainwindow.h>
+#include <qnamespace.h>
 #include <qpushbutton.h>
 #include "CoreAudio.h"
 #include "portaudio.h"
@@ -23,7 +26,7 @@
 
 namespace ae {
 MainWindow::MainWindow(QWidget *parent)
-    : QWidget(parent), ui(new Ui::MainWindow) {
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
 
   PaError err = CoreAudio::init();
@@ -40,9 +43,8 @@ MainWindow::MainWindow(QWidget *parent)
   ui->timeline->setScene(tlScene);
   tlScene->drawWaveform();
 
-  on_gain_clicked();
 
-  connect(ui->openFileBtn, &QPushButton::clicked, this, &MainWindow::openFile);
+  on_effectsBox_textActivated("Gain");
 
   connect(loader, &Loader::onFinish, this, &MainWindow::onBufReady);
 }
@@ -86,17 +88,17 @@ void MainWindow::on_stopBtn_clicked(){
   CoreAudio::stop();
 }
 
-void MainWindow::on_gain_clicked(){
-  auto effect = Constructor::getEffect("EQ");
-  effect->setUpUi(ui->effectWidget);
+// void MainWindow::on_gain_clicked(){
+//   auto effect = Constructor::getEffect("EQ");
+//   effect->setUpUi(ui->effectWidget);
 
-  connect(effect, &BaseEffect::modifiedBuffer, this, &MainWindow::onBufferChanged);
-}
+//   connect(effect, &BaseEffect::modifiedBuffer, this, &MainWindow::onBufferChanged);
+// }
 
 
 } // namespace ae
 
-void ae::MainWindow::openFile() {
+void ae::MainWindow::on_actionOpen_triggered() {
   QString fname =
       QFileDialog::getOpenFileName(this, "Open file", "", "Music (*.mp3)");
   if (fname.isEmpty()) {
@@ -104,6 +106,7 @@ void ae::MainWindow::openFile() {
   }
 
   loader->startDecoding(fname);
+  ui->fnameLabel->setText(fname);
 }
 
 const TimelineScene* ae::MainWindow::getTimeline() {   
@@ -112,4 +115,43 @@ const TimelineScene* ae::MainWindow::getTimeline() {
 
 void ae::MainWindow::onBufferChanged() {
   tlScene->drawWaveform();
+}
+
+void ae::MainWindow::on_effectsBox_textActivated(const QString& text) {
+  if(currentEffect){
+    delete currentEffect;
+  }
+  currentEffect = Constructor::getEffect(text.toStdString());
+  if(!currentEffect){
+    qDebug() << "Constructor: no such effect";
+    return;
+  }
+  currentEffect->setUpUi(ui->effectWidget);
+  connect(currentEffect, &BaseEffect::modifiedBuffer, this, &MainWindow::onBufferChanged);
+}
+
+void ae::MainWindow::on_navButton_toggled(bool b) {
+  if(b){
+    tlScene->setMouseBehaviour(MouseBehaviour::Navigation);
+  }
+}
+
+
+
+void ae::MainWindow::on_selButton_toggled(bool b) {
+    if(b){
+      tlScene->setMouseBehaviour(MouseBehaviour::Selection);
+    }
+}
+
+void ae::MainWindow::keyPressEvent(QKeyEvent* keyEvent) {    
+  if(keyEvent->key() == Qt::Key_Space){
+    if(CoreAudio::isPlaying()){
+      qDebug() << "pausing";
+      CoreAudio::pause();
+    } else {
+      qDebug() << "playing";
+      CoreAudio::play();
+    }
+  }
 }

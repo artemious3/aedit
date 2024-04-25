@@ -30,10 +30,11 @@ class CoreAudio {
 
         static StereoAudioBuffer buffer;
         static PaStream * stream;
+        static bool _isPlaying;
 
     public:
       static int32_t SamplingFrequency;
-      static int32_t BytesPerCallback;
+      static int32_t FramesPerCallback;
         
 
         static PaError init();
@@ -43,10 +44,14 @@ class CoreAudio {
         static PaError stop();
         static PaError pause();
 
+        static void setCurrentIndex(size_t ind);
+
         static void setBuffer(StereoAudioBuffer buffer);
         static StereoAudioBuffer getBuffer();
+        static bool isPlaying();
 
         static void initializeTestStream();
+
     };
 
 } // ae

@@ -42,28 +42,28 @@
 // }
 
 
-int paUsualCallback(const void *inputBuffer, void *outputBuffer,
-                    unsigned long framesPerBuffer,
-                    const PaStreamCallbackTimeInfo *timeInfo,
-                    PaStreamCallbackFlags statusFlags, void *userData) {
-    
-    StereoAudioBuffer *data = (StereoAudioBuffer *) userData;
-    Sample *out = (Sample *) outputBuffer;
+    int paUsualCallback(const void *inputBuffer, void *outputBuffer,
+                        unsigned long framesPerBuffer,
+                        const PaStreamCallbackTimeInfo *timeInfo,
+                        PaStreamCallbackFlags statusFlags, void *userData) {
+        
+        StereoAudioBuffer *data = (StereoAudioBuffer *) userData;
+        Sample *out = (Sample *) outputBuffer;
 
-    long remainingToRead = data->size - data->current;
-    long readNow = remainingToRead > framesPerBuffer ? framesPerBuffer : remainingToRead;
+        long remainingToRead = data->size - data->current;
+        long readNow = remainingToRead > framesPerBuffer ? framesPerBuffer : remainingToRead;
 
-    int j = data->current;
-    for(int i = 0; i < readNow; ++i){
-        *out++ = data->left[j];
-        *out++ = data->right[j];
-        ++j;
+        int j = data->current;
+        for(int i = 0; i < readNow; ++i){
+            *out++ = data->left[j];
+            *out++ = data->right[j];
+            ++j;
+        }
+
+        data->current += readNow;
+
+        if(data->current == data->size){
+            return paComplete;
+        }
+        return paContinue;
     }
-
-    data->current += readNow;
-
-    if(data->current == data->size){
-        return paComplete;
-    }
-    return paContinue;
-}

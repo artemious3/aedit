@@ -146,6 +146,9 @@ std::pair<int, int> TimelineScene::getSelection() const {
   auto bufSize = ae::CoreAudio::getBuffer().size;
   int beg = ((double)selectionStart / leftPixmap->pixmap().width()) * bufSize;
   int end = std::min( ((double)selectionEnd / leftPixmap->pixmap().width()) * bufSize, (double)bufSize );
+  if(beg > end){
+    std::swap(beg, end);
+  }
   return {beg, end};
 }
 

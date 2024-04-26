@@ -25,6 +25,11 @@
 #include "Constructor.h"
 
 namespace ae {
+
+
+  ae::MainWindow* MainWindow::_instance = nullptr;
+
+  
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
@@ -154,4 +159,17 @@ void ae::MainWindow::keyPressEvent(QKeyEvent* keyEvent) {
       CoreAudio::play();
     }
   }
+}
+
+ae::MainWindow* ae::MainWindow::MainWindow::getInstance() {
+  if(!_instance){
+    _instance = new MainWindow();
+  }
+  return _instance;
+}
+
+void ae::MainWindow::MainWindow::releaseInstance() {
+  if(_instance){
+    delete _instance;
+  }    
 }

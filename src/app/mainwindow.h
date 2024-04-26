@@ -29,8 +29,11 @@ namespace ae {
     class MainWindow : public QMainWindow {
     Q_OBJECT
 
-    public:
+    private:
+        static ae::MainWindow* _instance;
         explicit MainWindow(QWidget *parent = nullptr);
+
+    public:
         ~MainWindow() override;
 
       private:
@@ -63,6 +66,10 @@ namespace ae {
 
       public:
         const TimelineScene* getTimeline();
+
+      public:
+        static ae::MainWindow* getInstance();
+        static void releaseInstance();
 
     };
 } // ae

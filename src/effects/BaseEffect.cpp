@@ -1,6 +1,7 @@
 #include "BaseEffect.h"
 #include <QFormLayout>
 #include <qalgorithms.h>
+#include <qapplication.h>
 #include <qgridlayout.h>
 #include <qmessagebox.h>
 #include <qnamespace.h>
@@ -8,6 +9,7 @@
 #include <qpushbutton.h>
 #include <QMessageBox>
 #include "CoreAudio.h"
+#include <QApplication>
 #include "mainwindow.h"
 
 using namespace ae;
@@ -29,11 +31,7 @@ void BaseEffect::apply(){
         return;
     }
 
-    auto window = qobject_cast<MainWindow*>(gui->parent()->parent()->parent()) ;
-    if(!window){
-        qDebug() << "BaseEffect: Parent is not a window";
-        return;
-    }
+    auto window = MainWindow::getInstance();
 
     updateProperties();
 

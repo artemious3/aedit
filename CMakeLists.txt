@@ -30,8 +30,9 @@ add_executable(aedit src/main.cpp
         src/app/MainWindow.ui
         src/app/timeline/TimelineScene.cpp
         src/app/timeline/AudioPixmap.cpp
+        src/app/timeline/EffectSelection.cpp
 
-        src/core/core-audio/CoreInfo.h
+        src/core/core-audio/CoreInfo.cpp
         src/core/core-audio/CoreAudio.cpp
         src/core/core-audio/CoreAudio.h
         src/core/core-audio/pa_callback.c

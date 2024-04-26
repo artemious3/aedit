@@ -16,20 +16,26 @@ BaseEffect* Constructor::getEffect(const std::string& name){
     
     if(name == "Gain"){
         effect = new Gain{};
+        effect->setObjectName("Gain");
     } else if(name == "Low/High-pass"){
         effect = new PassEQ{};
+        effect->setObjectName("low/High-pass");
     } else if(name == "Robotiser"){
         effect = new Robotiser{};
+        effect->setObjectName("Robotiser");
     } else if(name == "Chorus"){
         effect = new Chorus{};
+        effect->setObjectName("Chorus");
     } else if(name == "Pitch"){
         effect = new Pitch{};
+        effect->setObjectName("Pitch");
     } else if (name == "TimePitch"){
         effect = new TimePitch{};
+        effect->setObjectName("TimePitch");
     } else if (name == "Reverb"){
         effect = new Reverb{};
+        effect->setObjectName("Reverb");
     }
-
 
     return effect;
 }

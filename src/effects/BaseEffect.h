@@ -8,6 +8,12 @@
 #include <qobject.h>
 #include <qtmetamacros.h>
 
+struct EffectInfo{
+    int begin;
+    int end;
+    QString name;
+};
+
 class BaseEffect : public QObject{
 
     Q_OBJECT  
@@ -31,7 +37,7 @@ public:
     virtual void setUpUi(QWidget*);
 
 signals:
-    void modifiedBuffer();
+    void modifiedBuffer(int, int);
 };
 
 #endif /* CDBD0DF3_AB66_4C7A_9079_82E73E96EB68 */

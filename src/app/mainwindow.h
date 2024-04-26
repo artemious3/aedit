@@ -16,9 +16,6 @@
 #include "TimelineScene.h"
 #include "loader.h"
 
-
-
-
 namespace ae {
 
     QT_BEGIN_NAMESPACE
@@ -32,9 +29,10 @@ namespace ae {
     private:
         static ae::MainWindow* _instance;
         explicit MainWindow(QWidget *parent = nullptr);
-
     public:
         ~MainWindow() override;
+
+
 
       private:
         TimelineScene *tlScene;
@@ -45,6 +43,7 @@ namespace ae {
         void keyPressEvent(QKeyEvent* keyEvent) override;
         // void keyReleaseEvent(QKeyEvent* keyEvent);
         Ui::MainWindow *ui;
+
 
       public slots:
         void on_actionOpen_triggered();
@@ -62,7 +61,8 @@ namespace ae {
 
         void onError(QAudioDecoder::Error err );
 
-        void onBufferChanged();
+        void onBufferChanged(int, int);
+
 
       public:
         const TimelineScene* getTimeline();

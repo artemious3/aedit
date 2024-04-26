@@ -6,14 +6,17 @@
 #include <QPainter>
 #include <cstddef>
 #include <cstdio>
+#include <qalgorithms.h>
 #include <qcolor.h>
 #include <qdebug.h>
 #include <qgraphicsitem.h>
 #include <QGraphicsSceneMouseEvent>
+#include <qgraphicsscene.h>
 #include <qnamespace.h>
 #include <qtimer.h>
 #include "AudioPixmap.h"
 #include "CoreAudio.h"
+#include "EffectSelection.h"
 
 
 TimelineScene::TimelineScene(QWidget *widget) : QGraphicsScene(widget) {
@@ -27,6 +30,9 @@ TimelineScene::TimelineScene(QWidget *widget) : QGraphicsScene(widget) {
 TimelineScene::~TimelineScene() {
   delete posPointer;
   delete updater;
+  selectedEffect = nullptr;
+  qDeleteAll(effects);
+
 }
 
 // void TimelineScene::setBuffer(StereoAudioBuffer buffer_) {
@@ -64,15 +70,19 @@ void TimelineScene::drawWaveform() {
 }
 
 void TimelineScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+  QGraphicsScene::mousePressEvent(event);
 
   if(mBehaviour == MouseBehaviour::Selection){
     selectionPress(event);
   } else if (mBehaviour == MouseBehaviour::Navigation ){
     navigate(event);
   }
+
 }
 
 void TimelineScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+
+  QGraphicsScene::mouseMoveEvent(event);
   if(mBehaviour == MouseBehaviour::Selection){
     selectionMove(event);
   } else if( mBehaviour == MouseBehaviour::Navigation){
@@ -124,7 +134,6 @@ void TimelineScene::drawSelection() {
   }
 }
 
-
 // DANGEROUS TEST
 void TimelineScene::updatePosPointer() {
   using namespace ae;
@@ -144,8 +153,8 @@ void TimelineScene::updatePosPointer() {
 
 std::pair<int, int> TimelineScene::getSelection() const {
   auto bufSize = ae::CoreAudio::getBuffer().size;
-  int beg = ((double)selectionStart / leftPixmap->pixmap().width()) * bufSize;
-  int end = std::min( ((double)selectionEnd / leftPixmap->pixmap().width()) * bufSize, (double)bufSize );
+  int beg = std::round( ((double)bufSize / viewWidth ) * selectionStart );
+  int end = std::min( ((double)bufSize / viewWidth) * selectionEnd , (double)bufSize );
   if(beg > end){
     std::swap(beg, end);
   }
@@ -164,4 +173,30 @@ void TimelineScene::setMouseBehaviour(MouseBehaviour mb) {
     selectionStart = 0;
     selectionEnd = 0;
   }
+}
+
+void TimelineScene::pushEffect(int beg, int end) {  
+  auto buf = ae::CoreAudio::getBuffer();
+
+  double view_koef = ((double)leftPixmap->pixmap().width() / buf.size);
+
+  auto beg_pos = view_koef * beg;
+  auto end_pos = view_koef * end;
+  
+
+  auto new_eff = new EffectSelection(0,0, end_pos - beg_pos, viewHeight, beg, end);
+  new_eff->setPos(beg_pos, 0);  
+  addItem(new_eff);
+  effects.push_back(new_eff);
+  
+  selectEffect(effects.size()-1);
+}
+
+
+void TimelineScene::selectEffect(int i) {    
+   if(selectedEffect){
+    selectedEffect->setSelected(false);
+  }
+  selectedEffect = effects[i];
+  selectedEffect->setSelected(true);
 }

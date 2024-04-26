@@ -55,7 +55,7 @@ void BaseEffect::apply(){
     _process(&buf.left[ beg ], size, max);
     _process(&buf.right[ beg ], size, max);
 
-    emit modifiedBuffer();    
+    emit modifiedBuffer(beg, beg+size);    
 }
 
 BaseEffect::~BaseEffect() {

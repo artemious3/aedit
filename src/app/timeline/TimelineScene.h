@@ -1,6 +1,7 @@
 #ifndef AEDIT_TIMELINESCENE_H
 #define AEDIT_TIMELINESCENE_H
 
+#include "EffectSelection.h"
 #include <QGraphicsScene>
 #include <qcontainerfwd.h>
 #include <qgraphicsitem.h>
@@ -32,7 +33,7 @@ private:
   QTimer* updater;
 
   QGraphicsRectItem *selectionRect = nullptr;
-  QGraphicsPixmapItem *leftPixmap, *rightPixmap;
+  QGraphicsPixmapItem *leftPixmap = nullptr, *rightPixmap = nullptr;
   QGraphicsLineItem *posPointer = nullptr;
 
   int selectionStart = 0, selectionEnd = 0;
@@ -40,6 +41,10 @@ private:
   int viewHeight = 0; 
 
   MouseBehaviour mBehaviour = MouseBehaviour::Navigation;
+
+  QVector<EffectSelection*> effects;
+  EffectSelection* selectedEffect = nullptr;
+
 
 private slots:
   void updatePosPointer();
@@ -59,6 +64,8 @@ public:
   // void setBuffer(StereoAudioBuffer buffer);
   void drawWaveform();
   void drawSelection();
+  void pushEffect(int beg, int end);
+  void selectEffect(int i);
 
   std::pair<int, int> getSelection() const;
 

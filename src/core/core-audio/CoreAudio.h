@@ -36,7 +36,6 @@ class CoreAudio {
       static int32_t SamplingFrequency;
       static int32_t FramesPerCallback;
         
-
         static PaError init();
         static PaError terminate();
 

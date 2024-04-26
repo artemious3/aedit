@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   loader = new Loader;
 
+  ui->timeline->setMouseTracking(false);
   tlScene = new TimelineScene(ui->timeline);
   ui->timeline->setSceneRect(0, 0, ui->timeline->frameSize().width(),
                              ui->timeline->frameSize().height());
@@ -118,8 +119,9 @@ const TimelineScene* ae::MainWindow::getTimeline() {
   return tlScene; 
 }
 
-void ae::MainWindow::onBufferChanged() {
+void ae::MainWindow::onBufferChanged(int beg, int end) {
   tlScene->drawWaveform();
+  tlScene->pushEffect(beg, end);
 }
 
 void ae::MainWindow::on_effectsBox_textActivated(const QString& text) {
@@ -131,6 +133,7 @@ void ae::MainWindow::on_effectsBox_textActivated(const QString& text) {
     qDebug() << "Constructor: no such effect";
     return;
   }
+
   currentEffect->setUpUi(ui->effectWidget);
   connect(currentEffect, &BaseEffect::modifiedBuffer, this, &MainWindow::onBufferChanged);
 }

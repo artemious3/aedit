@@ -4,8 +4,7 @@
 
 #ifndef AEDIT_COREINFO_H
 #define AEDIT_COREINFO_H
-#include <array>
-#include <cmath>
+#include <QString>
 
 namespace ae {
 
@@ -116,8 +115,11 @@ namespace ae {
                                              3729.3100921447194,
                                              3951.066410048992,
                                              4186.009044809578};
-
+public:
         static double getFreq(Note note, short octave);
+
+
+        static QString getTimeString(size_t ind);
     };
 
 } // ae

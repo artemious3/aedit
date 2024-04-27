@@ -45,6 +45,8 @@ private:
   QVector<EffectSelection*> effects;
   EffectSelection* selectedEffect = nullptr;
 
+  bool pressed = false;
+
 
 private slots:
   void updatePosPointer();
@@ -52,6 +54,7 @@ private slots:
 protected:
   void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
   void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+  void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
   void selectionPress(QGraphicsSceneMouseEvent *event);
   void selectionMove(QGraphicsSceneMouseEvent *event);
@@ -64,8 +67,12 @@ public:
   // void setBuffer(StereoAudioBuffer buffer);
   void drawWaveform();
   void drawSelection();
+
+
   void pushEffect(int beg, int end);
   void selectEffect(int i);
+  void resetEffects();
+
 
   std::pair<int, int> getSelection() const;
 

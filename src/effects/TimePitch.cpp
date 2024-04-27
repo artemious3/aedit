@@ -9,8 +9,8 @@ void TimePitch::_process(Sample *buf, int size, int max_in) {
   qDebug() << "time pitch!";
 
   auto new_size = (int)std::ceil(size * koef);
-  Sample* newBuf = new Sample[size * koef];
-  for(int i = 0; i < size*koef; ++i){
+  Sample* newBuf = new Sample[size];
+  for(int i = 0; i < size; ++i){
       double oldInd = (double)i / koef;
       auto fl = std::floor(oldInd);
       auto cl = std::ceil(oldInd);
@@ -18,10 +18,10 @@ void TimePitch::_process(Sample *buf, int size, int max_in) {
       buf[(int)fl];
   }
 
-  for(int i = 0; i < std::min(new_size, max_in); ++i){
+  for(int i = 0; i < size; ++i){
       buf[i] = newBuf[i];
   }
-  for(int i = new_size; i < std::min(max_in, size); ++i){
+  for(int i = new_size; i < size; ++i){
       buf[i] = 0;
   }
   

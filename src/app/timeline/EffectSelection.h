@@ -2,6 +2,7 @@
 #define BD4DE6C6_612D_4E47_9B93_0B23993245D8
 #include <QGraphicsItem>
 #include <qgraphicsitem.h>
+#include <qgraphicssceneevent.h>
 #include <qpainter.h>
 
 class EffectSelection : public QGraphicsRectItem{
@@ -18,10 +19,12 @@ class EffectSelection : public QGraphicsRectItem{
     static int cur_hue;
 
     QGraphicsTextItem *begText = nullptr, *endText = nullptr;
+    QGraphicsRectItem* selectionRect;
+
+    bool selection = false;
 
 public:
 EffectSelection(qreal, qreal, qreal, qreal, int, int);
-    // virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr);    
     void setSelected(bool);
     virtual ~EffectSelection();
     

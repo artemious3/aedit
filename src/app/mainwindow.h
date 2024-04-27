@@ -12,6 +12,7 @@
 #include <QAudioDecoder>
 #include <qaudiodecoder.h>
 #include <QMainWindow>
+#include <qlistwidget.h>
 #include "BaseEffect.h"
 #include "TimelineScene.h"
 #include "loader.h"
@@ -58,10 +59,12 @@ namespace ae {
 
         void on_navButton_toggled(bool b);
         void on_selButton_toggled(bool b);
+        void on_historyList_currentRowChanged(int row);
+        
 
         void onError(QAudioDecoder::Error err );
 
-        void onBufferChanged(int, int);
+        void onBufferChanged(int, int, QString);
 
 
       public:

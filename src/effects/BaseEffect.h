@@ -37,7 +37,7 @@ public:
     virtual void setUpUi(QWidget*);
 
 signals:
-    void modifiedBuffer(int, int);
+    void modifiedBuffer(int, int, QString);
 };
 
 #endif /* CDBD0DF3_AB66_4C7A_9079_82E73E96EB68 */

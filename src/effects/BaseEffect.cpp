@@ -20,8 +20,8 @@ void BaseEffect::setUpUi(QWidget* widget ) {
 
     applyBtn = new QPushButton("Apply",     widget);
     layout->insertRow(0, applyBtn);
-    applyBtn->setFocusPolicy(Qt::FocusPolicy::TabFocus);
-
+    applyBtn->setFocusPolicy(Qt::NoFocus);
+    widget->setFocusPolicy(Qt::NoFocus);
     connect(applyBtn, &QPushButton::clicked, this, &BaseEffect::apply);
 }
 
@@ -51,11 +51,13 @@ void BaseEffect::apply(){
 
     auto max = buf.size - sel.first;
 
+    gui->setEnabled(false);
     qDebug() << max << size;
     _process(&buf.left[ beg ], size, max);
     _process(&buf.right[ beg ], size, max);
+    gui->setEnabled(true);
 
-    emit modifiedBuffer(beg, beg+size);    
+    emit modifiedBuffer(beg, beg+size, objectName());    
 }
 
 BaseEffect::~BaseEffect() {

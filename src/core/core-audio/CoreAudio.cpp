@@ -56,18 +56,17 @@ namespace ae {
     }
 
     PaError CoreAudio::play() {
-        //_isPlaying = true;
         return Pa_StartStream(stream);
     }
 
     PaError CoreAudio::stop() {
         buffer.current = 0;
-        _isPlaying = false;
+        //_isPlaying = false;
         return Pa_StopStream(stream);
     }
 
     PaError CoreAudio::pause(){
-        _isPlaying = false;
+        //_isPlaying = false;
         return Pa_StopStream(stream);
     }
 

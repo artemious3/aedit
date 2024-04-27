@@ -15,6 +15,7 @@
 #include <QKeyEvent>
 #include <qaudiodecoder.h>
 #include <qaudioformat.h>
+#include <qcoreevent.h>
 #include <qfiledialog.h>
 #include <qlogging.h>
 #include <qmainwindow.h>
@@ -25,7 +26,6 @@
 #include "Constructor.h"
 
 namespace ae {
-
 
   ae::MainWindow* MainWindow::_instance = nullptr;
 
@@ -53,6 +53,9 @@ MainWindow::MainWindow(QWidget *parent)
   on_effectsBox_textActivated("Gain");
 
   connect(loader, &Loader::onFinish, this, &MainWindow::onBufReady);
+  foreach( auto w, findChildren<QWidget*>() ){
+    w->setFocusPolicy(Qt::NoFocus);
+  }
 }
 
 MainWindow::~MainWindow() {
@@ -65,6 +68,8 @@ void MainWindow::onError(QAudioDecoder::Error err) { qDebug() << "error!"; }
 
 void MainWindow::onBufReady() {
     CoreAudio::setBuffer(loader->getResultingBuffer());
+    tlScene->resetEffects();
+    ui->historyList->clear();
     tlScene->drawWaveform();
 }
 
@@ -119,9 +124,11 @@ const TimelineScene* ae::MainWindow::getTimeline() {
   return tlScene; 
 }
 
-void ae::MainWindow::onBufferChanged(int beg, int end) {
+void ae::MainWindow::onBufferChanged(int beg, int end, QString changeInfo) {
   tlScene->drawWaveform();
   tlScene->pushEffect(beg, end);
+  ui->historyList->addItem(changeInfo);
+  ui->historyList->setCurrentRow(ui->historyList->count() - 1);
 }
 
 void ae::MainWindow::on_effectsBox_textActivated(const QString& text) {
@@ -145,7 +152,6 @@ void ae::MainWindow::on_navButton_toggled(bool b) {
 }
 
 
-
 void ae::MainWindow::on_selButton_toggled(bool b) {
     if(b){
       tlScene->setMouseBehaviour(MouseBehaviour::Selection);
@@ -158,8 +164,12 @@ void ae::MainWindow::keyPressEvent(QKeyEvent* keyEvent) {
       qDebug() << "pausing";
       CoreAudio::pause();
     } else {
-      qDebug() << "playing";
-      CoreAudio::play();
+      qDebug() << "starting playing";
+      auto err = CoreAudio::play();
+      if(err == paStreamIsNotStopped){
+        CoreAudio::pause();
+        CoreAudio::play();
+      }
     }
   }
 }
@@ -175,4 +185,8 @@ void ae::MainWindow::MainWindow::releaseInstance() {
   if(_instance){
     delete _instance;
   }    
+}
+
+void ae::MainWindow::on_historyList_currentRowChanged(int row) {
+  tlScene->selectEffect( row );
 }

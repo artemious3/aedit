@@ -54,6 +54,10 @@ void BaseEffect::apply(){
     gui->setEnabled(false);
     qDebug() << max << size;
     _process(&buf.left[ beg ], size, max);
+    reset();
+    // for(int i = beg; i < size + beg; ++i){
+    //     buf.right[i] = buf.left[i];
+    // }
     _process(&buf.right[ beg ], size, max);
     gui->setEnabled(true);
 
@@ -63,3 +67,5 @@ void BaseEffect::apply(){
 BaseEffect::~BaseEffect() {
     qDeleteAll(gui->children());
 }
+
+void BaseEffect::reset() {}

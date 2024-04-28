@@ -48,6 +48,8 @@ namespace ae {
 
       public slots:
         void on_actionOpen_triggered();
+        void on_actionExport_triggered();
+        
         void onBufReady();
 
         void on_playBtn_clicked();

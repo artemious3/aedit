@@ -1,26 +1,24 @@
 #include "TimelineScene.h"
-#include <QPainterPath>
 #include <QGraphicsItem>
-#include <algorithm>
 #include <QGraphicsView>
 #include <QPainter>
-#include <cstddef>
-#include <cstdio>
+#include <QPainterPath>
+#include <algorithm>
+
+#include "AudioPixmap.h"
+#include "CoreAudio.h"
+#include "EffectSelection.h"
+#include <QGraphicsSceneMouseEvent>
 #include <qalgorithms.h>
 #include <qcolor.h>
 #include <qdebug.h>
 #include <qgraphicsitem.h>
-#include <QGraphicsSceneMouseEvent>
 #include <qgraphicsscene.h>
 #include <qnamespace.h>
 #include <qtimer.h>
-#include "AudioPixmap.h"
-#include "CoreAudio.h"
-#include "EffectSelection.h"
-
 
 TimelineScene::TimelineScene(QWidget *widget) : QGraphicsScene(widget) {
-  //buffer = {nullptr, nullptr, 0, 0, false};
+  // buffer = {nullptr, nullptr, 0, 0, false};
   updater = new QTimer(this);
 
   connect(updater, &QTimer::timeout, this, &TimelineScene::updatePosPointer);
@@ -32,7 +30,6 @@ TimelineScene::~TimelineScene() {
   delete updater;
   selectedEffect = nullptr;
   qDeleteAll(effects);
-
 }
 
 // void TimelineScene::setBuffer(StereoAudioBuffer buffer_) {
@@ -42,11 +39,10 @@ TimelineScene::~TimelineScene() {
 void TimelineScene::drawWaveform() {
   removeItem(leftPixmap);
   removeItem(rightPixmap);
-  //removeItem(posPointer); posPointer = nullptr;
+  // removeItem(posPointer); posPointer = nullptr;
 
   viewWidth = views().first()->width();
   viewHeight = views().first()->height();
-  
 
   auto buffer = ae::CoreAudio::getBuffer();
   if (buffer.size == 0 || views().size() == 0) {
@@ -54,10 +50,10 @@ void TimelineScene::drawWaveform() {
     return;
   }
 
-  AudioPixmap leftWaveform(buffer.left, buffer.size, viewWidth, viewHeight/2,
+  AudioPixmap leftWaveform(buffer.left, buffer.size, viewWidth, viewHeight / 2,
                            LEFT_WAVEFORM_COLOR);
-  AudioPixmap rightWaveform(buffer.right, buffer.size, viewWidth, viewHeight/2,
-                            RIGHT_WAVEFORM_COLOR);
+  AudioPixmap rightWaveform(buffer.right, buffer.size, viewWidth,
+                            viewHeight / 2, RIGHT_WAVEFORM_COLOR);
 
   leftPixmap = new QGraphicsPixmapItem(leftWaveform);
   rightPixmap = new QGraphicsPixmapItem(rightWaveform);
@@ -68,29 +64,27 @@ void TimelineScene::drawWaveform() {
   addItem(leftPixmap);
   addItem(rightPixmap);
 
-
-  setSceneRect(0,0, viewWidth, viewHeight);
-  }
+  setSceneRect(0, 0, viewWidth, viewHeight);
+}
 
 void TimelineScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
   QGraphicsScene::mousePressEvent(event);
   pressed = true;
-  if(mBehaviour == MouseBehaviour::Selection){
+  if (mBehaviour == MouseBehaviour::Selection) {
     selectionPress(event);
-  } else if (mBehaviour == MouseBehaviour::Navigation ){
+  } else if (mBehaviour == MouseBehaviour::Navigation) {
     navigate(event);
   }
-
 }
 
 void TimelineScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-  if(!pressed){
+  if (!pressed) {
     return;
   }
   QGraphicsScene::mouseMoveEvent(event);
-  if(mBehaviour == MouseBehaviour::Selection){
+  if (mBehaviour == MouseBehaviour::Selection) {
     selectionMove(event);
-  } else if( mBehaviour == MouseBehaviour::Navigation){
+  } else if (mBehaviour == MouseBehaviour::Navigation) {
     navigate(event);
   }
 }
@@ -98,48 +92,45 @@ void TimelineScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
   pressed = false;
 }
 
-
-
 void TimelineScene::selectionPress(QGraphicsSceneMouseEvent *event) {
   if (event->button() == Qt::LeftButton) {
     selectionStart = event->scenePos().x();
     selectionEnd = selectionStart;
   }
-  
-  if(selectionRect){
+
+  if (selectionRect) {
     removeItem(selectionRect);
     delete selectionRect;
     selectionRect = nullptr;
   }
 }
 
-
-void TimelineScene::selectionMove(QGraphicsSceneMouseEvent *event){
+void TimelineScene::selectionMove(QGraphicsSceneMouseEvent *event) {
   selectionEnd = event->scenePos().x();
   drawSelection();
 }
 
-void TimelineScene::navigate(QGraphicsSceneMouseEvent *event){
+void TimelineScene::navigate(QGraphicsSceneMouseEvent *event) {
   auto x = event->scenePos().x();
   qDebug() << x;
   auto buf_size = ae::CoreAudio::getBuffer().size;
-  auto ind =  ( (double)x / leftPixmap->pixmap().width() ) * buf_size;
-  ae::CoreAudio::setCurrentIndex(ind); 
+  auto ind = ((double)x / leftPixmap->pixmap().width()) * buf_size;
+  ae::CoreAudio::setCurrentIndex(ind);
   updatePosPointer();
 }
 
 void TimelineScene::drawSelection() {
   auto left = selectionStart;
   auto right = selectionEnd;
-  if(right < left){
+  if (right < left) {
     std::swap(left, right);
   }
 
   if (!selectionRect) {
-    selectionRect = addRect(left, -2, right-left,
-                            sceneRect().height() + 1, QPen(Qt::gray, 1), SELECTION_COLOR);
+    selectionRect = addRect(left, -2, right - left, sceneRect().height() + 1,
+                            QPen(Qt::gray, 1), SELECTION_COLOR);
   } else {
-    selectionRect->setRect(left, 0, right-left, views().first()->height());
+    selectionRect->setRect(left, 0, right - left, views().first()->height());
   }
 }
 
@@ -150,14 +141,14 @@ void TimelineScene::updatePosPointer() {
   auto cur = buf.current;
   auto size = buf.size;
 
-  if(!posPointer){
-    posPointer = new QGraphicsLineItem(0,0,0, height());
+  if (!posPointer) {
+    posPointer = new QGraphicsLineItem(0, 0, 0, height());
     posPointer->setPen(posPtrPen);
     posPointer->setZValue(16.0);
     addItem(posPointer);
   }
-  
-  posPointer->setPos( (float)cur/size * viewWidth, 0 );
+
+  posPointer->setPos((float)cur / size * viewWidth, 0);
 }
 
 std::pair<int, int> TimelineScene::getSelection() const {
@@ -167,21 +158,20 @@ std::pair<int, int> TimelineScene::getSelection() const {
   int beg = samplesPerPx * selectionStart;
   int end = samplesPerPx * selectionEnd;
 
-  if(beg > end){
+  if (beg > end) {
     std::swap(beg, end);
   }
   qDebug() << "scene width" << width();
-    qDebug() << "end: " << end;
-    qDebug() << "bufsize:" << bufSize;
+  qDebug() << "end: " << end;
+  qDebug() << "bufsize:" << bufSize;
   return {beg, end};
 }
 
-
 void TimelineScene::setMouseBehaviour(MouseBehaviour mb) {
-  mBehaviour = mb;    
+  mBehaviour = mb;
 
-  if(mb == MouseBehaviour::Navigation){
-    if(selectionRect){
+  if (mb == MouseBehaviour::Navigation) {
+    if (selectionRect) {
       removeItem(selectionRect);
       selectionRect = nullptr;
     }
@@ -190,31 +180,30 @@ void TimelineScene::setMouseBehaviour(MouseBehaviour mb) {
   }
 }
 
-void TimelineScene::pushEffect(int beg, int end) {  
+void TimelineScene::pushEffect(int beg, int end) {
   auto buf = ae::CoreAudio::getBuffer();
 
   long samplesPerPx = buf.size / sceneRect().width();
 
   auto beg_pos = beg / samplesPerPx;
   auto end_pos = end / samplesPerPx;
-  
 
-  auto new_eff = new EffectSelection(0,0, end_pos - beg_pos, viewHeight, beg, end);
-  new_eff->setPos(beg_pos, 0);  
+  auto new_eff =
+      new EffectSelection(0, 0, end_pos - beg_pos, viewHeight, beg, end);
+  new_eff->setPos(beg_pos, 0);
   new_eff->setZValue(8.0);
   addItem(new_eff);
   effects.push_back(new_eff);
 
-  selectEffect(effects.size()-1);
+  selectEffect(effects.size() - 1);
 }
 
-
-void TimelineScene::selectEffect(int i) {    
-   if(selectedEffect){
+void TimelineScene::selectEffect(int i) {
+  if (selectedEffect) {
     selectedEffect->setSelected(false);
     selectedEffect->setZValue(8.0);
   }
-  if(i == -1){
+  if (i == -1) {
     return;
   }
 
@@ -224,8 +213,7 @@ void TimelineScene::selectEffect(int i) {
 }
 
 void TimelineScene::resetEffects() {
-  qDeleteAll(effects);  
+  qDeleteAll(effects);
   effects.clear();
-  selectedEffect = nullptr;  
+  selectedEffect = nullptr;
 }
-

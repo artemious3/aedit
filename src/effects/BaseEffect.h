@@ -28,6 +28,7 @@ protected:
 protected:
     virtual void _process(Sample* buf, int size, int max_in) = 0;
     virtual void updateProperties() = 0;
+    virtual void reset();
 
 
 protected slots:

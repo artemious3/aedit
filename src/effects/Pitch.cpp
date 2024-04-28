@@ -2,13 +2,12 @@
 #include "BaseEffect.h"
 #include "Utils.h"
 #include <complex>
+#include <qspinbox.h>
 
 struct ae_signal{
     float magn;
     float bin_freq;
 };
-
-
 
 void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   auto n = freqs.size();
@@ -18,7 +17,7 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   Utils::Frequencies new_freqs( freqs.size());
 
   std::vector<ae_signal> analysis (freqs.size(), {0,0});
-  std::vector<ae_signal> synthesis (freqs.size(), {0,0});
+
 
 //1. ANALYSIS
   for (int i = 0; i <= n_h; ++i){
@@ -33,10 +32,10 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
     auto exp_dphase = bin_freq * hop;
 
     auto freq_diverg = Utils::normalise( act_dphase - exp_dphase );
-    //smth from calculus
-    double bin_diverg = freq_diverg * CHUNK_SIZE / (2 * M_PI * hop);
+    //smth from calculus`
+    double bin_diverg = freq_diverg * CHUNK_SIZE / (2.0 * M_PI) / hop;
 
-    analysis[i].bin_freq = (float)bin_freq + bin_diverg;
+    analysis[i].bin_freq = (float)i + bin_diverg;
     analysis[i].magn = magn;
     
     lastPhases[i] = phase;
@@ -44,10 +43,12 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 
 //2. MODIFYING
 
-for(int i = 0; i <= n_h; ++i){
-    int new_i = std::round((float)i * koef);
+ std::vector<ae_signal> synthesis (freqs.size(), {0,0});
 
-    if(new_i >= n_h){
+for(int i = 0; i <= n_h; ++i){
+    int new_i = std::floor((float)i * koef + 0.5);
+
+    if(new_i > n_h){
         break; // we can break, further values only get greater
     }
 
@@ -60,7 +61,7 @@ for(int i = 0; i <= n_h; ++i){
 // 3. SYNTHESYS
 
 for(int i = 0; i <= n_h; ++i){
-    auto bin_freq = 2 * M_PI * i / CHUNK_SIZE;
+    auto bin_freq = 2 * M_PI * (float)i / CHUNK_SIZE;
 
     auto bin_diverg = synthesis[i].bin_freq - (float)i;
     float dphase = bin_diverg * 2.0 * M_PI * (float)hop / (float)CHUNK_SIZE;
@@ -79,10 +80,26 @@ for(int i = 0; i <= n_h; ++i){
 }
 
 
-void Pitch::updateProperties() {}
+void Pitch::updateProperties() {
+  koef = pitchShiftBox->value();
+}
 
-void Pitch::setUpUi(QWidget *widget) { BaseEffect::setUpUi(widget); }
+void Pitch::setUpUi(QWidget *widget) {
+   BaseEffect::setUpUi(widget);
+   pitchShiftBox = new QDoubleSpinBox();
+   pitchShiftBox->setMinimum(0.2);
+   pitchShiftBox->setMaximum(3.0);
+   pitchShiftBox->setValue(1.12);
+   layout->addRow("Pitch shift", pitchShiftBox);
+}
 
 Pitch::Pitch() : lastPhases(CHUNK_SIZE, 0), lastSynthPhases(CHUNK_SIZE, 0) {}
 
 
+
+void Pitch::reset() {
+  for(int i = 0; i < CHUNK_SIZE; ++i){
+    lastPhases[i] = 0;
+    lastSynthPhases[i] = 0;
+  }    
+}

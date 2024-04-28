@@ -3,6 +3,7 @@
 
 #include "FFTProcessor.h"
 #include "Utils.h"
+#include <qspinbox.h>
 #include <qwidget.h>
 #include <QCheckBox>
 #include <QSpinBox>
@@ -13,8 +14,7 @@ class Pitch : public FFTProcessor{
     std::vector<float> lastPhases;
     std::vector<float> lastSynthPhases;
 
-    
-
+    QDoubleSpinBox* pitchShiftBox;
     void processFftChunk(Utils::Frequencies& freqs) override;
     void updateProperties() override;
     //void _process(Sample*, int, int) override;
@@ -22,6 +22,7 @@ class Pitch : public FFTProcessor{
 public:
     void setUpUi(QWidget*) override;
     Pitch();
+    virtual void reset() override;
 
 };
 

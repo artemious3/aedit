@@ -21,7 +21,7 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range) {
 
   auto hop = CHUNK_SIZE / 2;
   auto win = Utils::cosSumWindow(CHUNK_SIZE, CHUNK_SIZE);
-
+  
   for (int i = 0; i < size; i += hop) {
     auto curChunkSize = std::min(CHUNK_SIZE, max_range - i);
     
@@ -36,8 +36,9 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range) {
     Utils::ifft(freqs, outBuf, CHUNK_SIZE);
 
     for(int res_i = i, out_i = 0; out_i < curChunkSize; ++res_i, ++out_i){
-      resBuf[res_i] += outBuf[out_i];
+      resBuf[res_i] += outBuf[out_i] * win[out_i];
     }
+    
   }
   for(int i = 0; i < size; ++i){
     buf[i] = resBuf[i];

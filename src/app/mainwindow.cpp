@@ -8,6 +8,7 @@
 #include "mainwindow.h"
 #include "BaseEffect.h"
 #include "TimelineScene.h"
+#include "exporter.h"
 #include "loader.h"
 #include "ui_MainWindow.h"
 #include <QAudioDecoder>
@@ -19,8 +20,10 @@
 #include <qfiledialog.h>
 #include <qlogging.h>
 #include <qmainwindow.h>
+#include <qmessagebox.h>
 #include <qnamespace.h>
 #include <qpushbutton.h>
+#include <stdexcept>
 #include "CoreAudio.h"
 #include "portaudio.h"
 #include "Constructor.h"
@@ -119,6 +122,21 @@ void ae::MainWindow::on_actionOpen_triggered() {
   loader->startDecoding(fname);
   ui->fnameLabel->setText(fname);
 }
+
+
+ void ae::MainWindow::on_actionExport_triggered(){
+  auto fname = QFileDialog::getSaveFileName(this, "Export file", {}, "PCM WAV (*.wav)");
+  if(fname.isEmpty()){
+    return;
+  }
+
+  try{
+    Exporter::exportCoreBuffer(fname);
+  } catch (const std::runtime_error&){
+    QMessageBox::warning(this, "Warning", "Could not save the file");
+  }
+  
+ }
 
 const TimelineScene* ae::MainWindow::getTimeline() {   
   return tlScene; 

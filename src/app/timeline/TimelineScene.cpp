@@ -153,13 +153,18 @@ void TimelineScene::updatePosPointer() {
 
 std::pair<int, int> TimelineScene::getSelection() const {
   auto bufSize = ae::CoreAudio::getBuffer().size;
-  long samplesPerPx = bufSize / width();
+  int samplesPerPx = bufSize / width();
 
   int beg = samplesPerPx * selectionStart;
   int end = samplesPerPx * selectionEnd;
-
   if (beg > end) {
     std::swap(beg, end);
+  }
+  if(beg < 0){
+    beg = 0;
+  }
+  if(end >= bufSize){
+    end = bufSize-1;
   }
   qDebug() << "scene width" << width();
   qDebug() << "end: " << end;

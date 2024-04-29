@@ -9,6 +9,7 @@
 #include <qnamespace.h>
 #include <qpixmap.h>
 #include <qscopedpointer.h>
+#include <qtmetamacros.h>
 #include <qvariant.h>
 #include <qwidget.h>
 
@@ -73,10 +74,12 @@ public:
   void selectEffect(int i);
   void resetEffects();
 
-
   std::pair<int, int> getSelection() const;
-
   void setMouseBehaviour(MouseBehaviour mb);
+
+
+  signals:
+    void posPointerChanged();
 };
 
 #endif // AEDIT_TIMELINESCENE_H

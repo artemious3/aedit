@@ -13,7 +13,7 @@ class Reverb : public BaseEffect{
     float allPassDelay [2]= {1357, 2057};
 
 protected:
-    virtual void _process(Sample* buf, int size, int max_in) override;
+    virtual void _process(Sample* buf, int size, int max_in, short) override;
     virtual void updateProperties() override;
  
 public:

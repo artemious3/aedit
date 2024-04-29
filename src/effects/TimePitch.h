@@ -13,7 +13,7 @@ private:
     QDoubleSpinBox* koefBox;
 
 protected:
-    virtual void _process(Sample* buf, int size, int max_in) override;
+    virtual void _process(Sample* buf, int size, int max_in, short) override;
     virtual void updateProperties() override;
  
 public:

@@ -53,12 +53,9 @@ void BaseEffect::apply(){
 
     gui->setEnabled(false);
     qDebug() << max << size;
-    _process(&buf.left[ beg ], size, max);
-    reset();
-    // for(int i = beg; i < size + beg; ++i){
-    //     buf.right[i] = buf.left[i];
-    // }
-    _process(&buf.right[ beg ], size, max);
+    _process(&buf.left[ beg ], size, max, 0);
+    reset();    
+    _process(&buf.right[ beg ], size, max, 1);
     gui->setEnabled(true);
 
     emit modifiedBuffer(beg, beg+size, objectName());    

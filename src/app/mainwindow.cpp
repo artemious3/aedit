@@ -7,6 +7,7 @@
 
 #include "mainwindow.h"
 #include "BaseEffect.h"
+#include "CoreInfo.h"
 #include "TimelineScene.h"
 #include "exporter.h"
 #include "loader.h"
@@ -27,6 +28,7 @@
 #include "CoreAudio.h"
 #include "portaudio.h"
 #include "Constructor.h"
+#include <QTimer>
 
 namespace ae {
 
@@ -52,14 +54,14 @@ MainWindow::MainWindow(QWidget *parent)
   ui->timeline->setScene(tlScene);
   tlScene->drawWaveform();
 
-
   on_effectsBox_textActivated("Gain");
 
   connect(loader, &Loader::onFinish, this, &MainWindow::onBufReady);
   foreach( auto w, findChildren<QWidget*>() ){
     w->setFocusPolicy(Qt::NoFocus);
   }
-}
+
+  }
 
 MainWindow::~MainWindow() {
   CoreAudio::terminate();
@@ -76,19 +78,6 @@ void MainWindow::onBufReady() {
     tlScene->drawWaveform();
 }
 
-// void MainWindow::keyPressEvent(QKeyEvent *keyEvent) {
-//   if (!keyEvent->isAutoRepeat()) {
-//     QWidget::keyPressEvent(keyEvent);
-//     CoreAudio::play();
-//   }
-// }
-
-// void MainWindow::keyReleaseEvent(QKeyEvent *keyEvent) {
-//   if (!keyEvent->isAutoRepeat()) {
-//     CoreAudio::stop();
-//   }
-// }
-
 
 void MainWindow::on_playBtn_clicked(){
   CoreAudio::play();
@@ -101,13 +90,6 @@ void MainWindow::on_pauseBtn_clicked(){
 void MainWindow::on_stopBtn_clicked(){
   CoreAudio::stop();
 }
-
-// void MainWindow::on_gain_clicked(){
-//   auto effect = Constructor::getEffect("EQ");
-//   effect->setUpUi(ui->effectWidget);
-
-//   connect(effect, &BaseEffect::modifiedBuffer, this, &MainWindow::onBufferChanged);
-// }
 
 
 } // namespace ae
@@ -182,12 +164,7 @@ void ae::MainWindow::keyPressEvent(QKeyEvent* keyEvent) {
       qDebug() << "pausing";
       CoreAudio::pause();
     } else {
-      qDebug() << "starting playing";
-      auto err = CoreAudio::play();
-      if(err == paStreamIsNotStopped){
-        CoreAudio::pause();
-        CoreAudio::play();
-      }
+      CoreAudio::play();
     }
   }
 }
@@ -207,4 +184,10 @@ void ae::MainWindow::MainWindow::releaseInstance() {
 
 void ae::MainWindow::on_historyList_currentRowChanged(int row) {
   tlScene->selectEffect( row );
+}
+
+
+
+void ae::MainWindow::MainWindow::setTimeLabel(QString s) {
+  ui->timeLbl->setText(s);    
 }

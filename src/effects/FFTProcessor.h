@@ -9,7 +9,7 @@ class FFTProcessor : public BaseEffect{
 
 protected:
     
-    int CHUNK_SIZE = 256;
+    int CHUNK_SIZE = 2048;
     int HOP_DIVISOR = 2;
 
 private:
@@ -20,7 +20,7 @@ public:
 
 protected:
     //void updateProperties() override;
-    void _process(Sample*, int, int) override;
+    void _process(Sample*, int, int, short) override;
 }; 
 
 #endif /* C9DC23A8_022F_4F2E_933B_9B0CCC66B301 */

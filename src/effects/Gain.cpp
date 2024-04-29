@@ -8,7 +8,7 @@
 #include <QGridLayout>
 
 
-void Gain::_process(Sample* buf, int size, int max_out){
+void Gain::_process(Sample* buf, int size, int max_out, short){
     for(int i = 0; i < size; ++i){
         buf[i] *= _koef;
     }

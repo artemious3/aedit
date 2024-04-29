@@ -117,9 +117,8 @@ namespace ae {
                                              4186.009044809578};
 public:
         static double getFreq(Note note, short octave);
-
-
         static QString getTimeString(size_t ind);
+        static QString getCurrentTimeString();
     };
 
 } // ae

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <climits>
 
-void Reverb::_process(Sample* buf, int size, int max_in) {
+void Reverb::_process(Sample* buf, int size, int max_in, short) {
     //ASSUMPTION: combDelays is sorted
 
     for(int d = 0; d < COMB_AMOUNT-1; ++d){

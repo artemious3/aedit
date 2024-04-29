@@ -44,12 +44,12 @@ class CoreAudio {
         static PaError pause();
 
         static void setCurrentIndex(size_t ind);
-
         static void setBuffer(StereoAudioBuffer buffer);
         static StereoAudioBuffer getBuffer();
         static bool isPlaying();
 
         static void initializeTestStream();
+
 
     };
 

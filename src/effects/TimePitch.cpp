@@ -4,30 +4,14 @@
 #include "CoreAudio.h"
 #include "Utils.h"
 #include <qspinbox.h>
+#include <QMessageBox>
+#include "CoreAudio.h"
 
-void TimePitch::_process(Sample *buf, int size, int max_in) {
-  // auto new_size = (int)std::ceil(size * koef);
-  // Sample* newBuf = new Sample[size];
-  // for(int i = 0; i < size; ++i){
-  //     double oldInd = (double)i / koef;
-  //     auto fl = std::floor(oldInd);
-  //     auto cl = std::ceil(oldInd);
-  //     newBuf[i] = (cl - oldInd) * buf[(int)cl] + (oldInd - fl) *
-  //     buf[(int)fl];
-  // }
-
-  // for(int i = 0; i < size; ++i){
-  //     buf[i] = newBuf[i];
-  // }
-  // for(int i = new_size; i < size; ++i){
-  //     buf[i] = 0;
-  // }
-  
-  // delete[] newBuf;
-
+void TimePitch::_process(Sample *buf, int size, int max_in, short channel) {
   auto new_size = (int)std::ceil(size * koef);
-  Sample* newBuf = new Sample[size];
-  for(int i = 0; i < size; ++i){
+  auto new_buf_size = ae::CoreAudio::getBuffer().size - size + new_size;
+  Sample* newBuf = new Sample[new_size];
+  for(int i = 0; i < new_size; ++i){
       double oldInd = (double)i / koef;
       int integ = std::floor(oldInd);
       int beg = std::max(integ - 3, 0);
@@ -46,14 +30,19 @@ void TimePitch::_process(Sample *buf, int size, int max_in) {
       newBuf[i] = val;
   }
 
-  for(int i = 0; i < std::min(new_size, size); ++i){
+  for(int i = 0; i < std::min(size, new_size); ++i){
       buf[i] = newBuf[i];
   }
+
   for(int i = new_size; i < size; ++i){
-      buf[i] = 0;
+    buf[i] = 0;
   }
-  
+
+  delete[] newBuf;
 }
+
+
+
 
 void TimePitch::updateProperties() { koef = koefBox->value(); }
 

@@ -43,7 +43,6 @@ private:
     return res;
   }
 
-
   static void ef_fft(Frequencies &freqs, bool inv = false) {
     auto n = freqs.size();
     auto hf_n = n / 2;
@@ -77,37 +76,36 @@ private:
 
 public:
   static float normalise(float x) {
-    while(x >  M_PI){
-        x -= 2.0f * M_PI;
+    while (x > M_PI) {
+      x -= 2.0f * M_PI;
     }
-    while(x < -M_PI){
-        x += 2.0f * M_PI;
+    while (x < -M_PI) {
+      x += 2.0f * M_PI;
     }
     return x;
-}
-
-
-static std::vector<double> cosSumWindow(int win_size, int size, double a0 = HANNING_A0) {
-  std::vector<double> window (size);
-  auto a1 = 1 - a0;
-  for (int i = 0; i < win_size; ++i) {
-    window[i] =  (a0 - a1 * std::cos(2.0 * M_PI * i / (double)win_size)) ;
   }
-  for(int i = win_size; i < size; ++i){
-    window[i] = 0;
+
+  static std::vector<double> cosSumWindow(int win_size, int size,
+                                          double a0 = HANNING_A0) {
+    std::vector<double> window(size);
+    auto a1 = 1 - a0;
+    for (int i = 0; i < win_size; ++i) {
+      window[i] = (a0 - a1 * std::cos(2.0 * M_PI * i / (double)win_size));
+    }
+    for (int i = win_size; i < size; ++i) {
+      window[i] = 0;
+    }
+    return std::move(window);
   }
-  return std::move(window);
-}
 
-
-  static float sinc(float x, float sf){
-    if(x == 0.f){
+  static float sinc(float x, float sf) {
+    if (x == 0.f) {
       return 1;
     }
     auto arg = M_PI * sf * x;
-    return std::sin(arg)/arg;
+    return std::sin(arg) / arg;
   }
-  
+
   static Frequencies fft(const Sample *buf, int size) {
     Frequencies freqs;
 
@@ -136,6 +134,18 @@ static std::vector<double> cosSumWindow(int win_size, int size, double a0 = HANN
   static double sinc(double x) {
     auto arg = M_PI * ae::CoreAudio::SamplingFrequency * x;
     return std::sin(arg) / arg;
+  }
+
+  static void shiftBuf(Sample *buf, size_t beg, size_t end, long long shift) {
+    if (shift > 0) {
+      for (int i = end - 1; i >= beg; --i) {
+        buf[i + shift] = buf[i];
+      }
+    } else {
+      for (int i = beg; i < end; ++i) {
+        buf[i + shift] = buf[i];
+      }
+    }
   }
 };
 

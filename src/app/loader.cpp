@@ -17,24 +17,16 @@ Loader::Loader() {
 Loader::~Loader() { decoder->deleteLater(); }
 
 void Loader::readBuffer() {
-//   qDebug() << "buffer is ready";
-//   if(decoder->error()){
-//     qDebug() << "error" << decoder->errorString();
-
-//   }
+  
   auto buf = decoder->read();
   auto sz = buf.byteCount() / sizeof(Sample);
-
   auto ptr = buf.data<Sample>();
-//   if(tmpBuffer.capacity() < tmpBuffer.size() + sz){
-//     tmpBuffer.reserve( tmpBuffer.size() + sz );
-//   }
-
 
   for (int i = 0; i < sz; ++i) {
     tmpBuffer.push_back(ptr[i]);
   }
-  //qDebug() << tmpBuffer.size();
+
+  //qDebug() << "dur: " << decoder->duration();
 }
 
 void Loader::finishReading() {
@@ -67,6 +59,8 @@ void Loader::startDecoding(const QString &fname) {
   decoder->setAudioFormat(format);
   decoder->setSource(fname);
   decoder->start();
+
+  tmpBuffer.reserve((double)decoder->duration() / 1000 * ae::CoreAudio::SamplingFrequency);
 
 }
 

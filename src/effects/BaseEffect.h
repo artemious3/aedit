@@ -26,13 +26,12 @@ protected:
     public: ~BaseEffect();
 
 protected:
-    virtual void _process(Sample* buf, int size, int max_in) = 0;
+    virtual void _process(Sample* buf, int size, int max_in, short channel) = 0;
     virtual void updateProperties() = 0;
     virtual void reset();
 
-
 protected slots:
-    void apply(); 
+    virtual void apply(); 
 
 public:
     virtual void setUpUi(QWidget*);

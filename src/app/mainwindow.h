@@ -27,13 +27,13 @@ namespace ae {
     class MainWindow : public QMainWindow {
     Q_OBJECT
 
+      const int TIME_UPDATE_INTERVAL = 64;
+
     private:
         static ae::MainWindow* _instance;
         explicit MainWindow(QWidget *parent = nullptr);
     public:
         ~MainWindow() override;
-
-
 
       private:
         TimelineScene *tlScene;
@@ -62,11 +62,12 @@ namespace ae {
         void on_navButton_toggled(bool b);
         void on_selButton_toggled(bool b);
         void on_historyList_currentRowChanged(int row);
-        
 
         void onError(QAudioDecoder::Error err );
 
         void onBufferChanged(int, int, QString);
+
+        void setTimeLabel(QString s);
 
 
       public:
@@ -75,6 +76,9 @@ namespace ae {
       public:
         static ae::MainWindow* getInstance();
         static void releaseInstance();
+        
+
+
 
     };
 } // ae

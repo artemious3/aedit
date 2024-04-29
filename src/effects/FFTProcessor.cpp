@@ -3,17 +3,16 @@
 #include "Utils.h"
 #include "coretypes.h"
 #include <algorithm>
-#include <cmath>
 
 void FFTProcessor::setUpUi(QWidget *widget) {
     BaseEffect::setUpUi(widget);
 }
 
-void FFTProcessor::_process(Sample *buf, int size, int max_range) {
+void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
   Sample *inBuf = new Sample[CHUNK_SIZE];
   Sample *outBuf = new Sample[CHUNK_SIZE];
   Sample *resBuf = new Sample [size + CHUNK_SIZE];
-  for (int i = 0; i < size; ++i) {
+  for (int i = 0; i < size + CHUNK_SIZE; ++i) {
     resBuf[i] = 0;
   }
 
@@ -38,8 +37,8 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range) {
     for(int res_i = i, out_i = 0; out_i < curChunkSize; ++res_i, ++out_i){
       resBuf[res_i] += outBuf[out_i] * win[out_i];
     }
-    
   }
+
   for(int i = 0; i < size; ++i){
     buf[i] = resBuf[i];
   }

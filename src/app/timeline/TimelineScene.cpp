@@ -7,7 +7,9 @@
 
 #include "AudioPixmap.h"
 #include "CoreAudio.h"
+#include "CoreInfo.h"
 #include "EffectSelection.h"
+#include "mainwindow.h"
 #include <QGraphicsSceneMouseEvent>
 #include <qalgorithms.h>
 #include <qcolor.h>
@@ -149,6 +151,7 @@ void TimelineScene::updatePosPointer() {
   }
 
   posPointer->setPos((float)cur / size * viewWidth, 0);
+  MainWindow::getInstance()->setTimeLabel(CoreInfo::getTimeString(cur));
 }
 
 std::pair<int, int> TimelineScene::getSelection() const {

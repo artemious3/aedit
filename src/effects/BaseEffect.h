@@ -23,7 +23,6 @@ protected:
     QWidget* gui = nullptr;
     QFormLayout* layout = nullptr;
     QPushButton *applyBtn = nullptr, *revertBtn = nullptr, *saveBtn = nullptr;
-    QThreadPool* tp;
 
     public: ~BaseEffect();
 
@@ -40,6 +39,8 @@ public:
 
 signals:
     void modifiedBuffer(int, int, QString);
+
+
 };
 
 #endif /* CDBD0DF3_AB66_4C7A_9079_82E73E96EB68 */

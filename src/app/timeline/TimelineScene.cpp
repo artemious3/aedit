@@ -72,6 +72,9 @@ void TimelineScene::drawWaveform() {
 void TimelineScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
   QGraphicsScene::mousePressEvent(event);
   pressed = true;
+
+
+  views().first()->setFocus();
   if (mBehaviour == MouseBehaviour::Selection) {
     selectionPress(event);
   } else if (mBehaviour == MouseBehaviour::Navigation) {

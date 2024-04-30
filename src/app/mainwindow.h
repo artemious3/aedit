@@ -43,6 +43,9 @@ namespace ae {
         bool isPressed = false;
         bool isBlocked = false;
         void keyPressEvent(QKeyEvent* keyEvent) override;
+
+
+        void setLoading(bool b);
         // void keyReleaseEvent(QKeyEvent* keyEvent);
         Ui::MainWindow *ui;
 

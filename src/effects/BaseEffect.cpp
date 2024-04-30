@@ -14,11 +14,11 @@
 #include <QtConcurrent>
 #include <qtconcurrentrun.h>
 #include <qthreadpool.h>
+#include <qtmetamacros.h>
 
 using namespace ae;
 
 void BaseEffect::setUpUi(QWidget* widget ) {
-    tp = new QThreadPool(this);
     gui = widget;
     layout = new QFormLayout(widget);
 
@@ -59,20 +59,27 @@ void BaseEffect::apply(){
     window->blockAudio(true);
 
 
-tp->start([=]{
+QThreadPool::globalInstance()->start([=]{
+
      _process(&buf.left[ beg ], size, max, 0);
     reset();    
     _process(&buf.right[ beg ], size, max, 1);
+
+    emit modifiedBuffer(beg, beg + size, objectName());
     gui->setEnabled(true);
-    emit modifiedBuffer(beg, beg+size, objectName());    
     window->blockAudio(false);
+    
 });
+
+
+
 
 
 }
 
 BaseEffect::~BaseEffect() {
     qDeleteAll(gui->children());
-}
+}    
+
 
 void BaseEffect::reset() {}

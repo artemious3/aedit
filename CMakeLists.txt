@@ -15,6 +15,7 @@ find_package(Qt6 COMPONENTS
         Gui
         Widgets
         Multimedia
+        Concurrent
         REQUIRED)
 
 add_subdirectory(lib/portaudio bin EXCLUDE_FROM_ALL)
@@ -23,6 +24,7 @@ include_directories(src/core/core-audio)
 include_directories(src/app)
 include_directories(src/app/timeline)
 include_directories(src/effects)
+
 
 add_executable(aedit src/main.cpp
         src/app/mainwindow.cpp
@@ -49,6 +51,9 @@ add_executable(aedit src/main.cpp
         src/effects/Reverb.cpp
 
         src/app/loader.cpp
+
+        src/resources.qrc
+        # portaudio_static
 )
 
 
@@ -58,6 +63,7 @@ target_link_libraries(aedit
         Qt::Gui
         Qt::Widgets
         Qt::Multimedia
+        Qt::Concurrent
 )
 
 

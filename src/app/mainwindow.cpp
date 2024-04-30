@@ -17,17 +17,18 @@
 #include <QKeyEvent>
 #include <qaudiodecoder.h>
 #include <qaudioformat.h>
-#include <qcoreevent.h>
 #include <qfiledialog.h>
 #include <qlogging.h>
 #include <qmainwindow.h>
 #include <qmessagebox.h>
 #include <qnamespace.h>
 #include <qpushbutton.h>
+#include <qwindowdefs.h>
 #include <stdexcept>
 #include "CoreAudio.h"
 #include "portaudio.h"
 #include "Constructor.h"
+#include <QMovie>
 #include <QTimer>
 
 namespace ae {
@@ -140,7 +141,9 @@ void ae::MainWindow::on_effectsBox_textActivated(const QString& text) {
   }
 
   currentEffect->setUpUi(ui->effectWidget);
-  ui->effectWidget->setFocusPolicy(Qt::NoFocus);
+  foreach(QWidget* w, ui->effectWidget->findChildren<QWidget*>()){
+    w->setFocusPolicy(Qt::ClickFocus);
+  }
   connect(currentEffect, &BaseEffect::modifiedBuffer, this, &MainWindow::onBufferChanged);
 }
 
@@ -206,7 +209,24 @@ void ae::MainWindow::MainWindow::blockAudio(bool b) {
   ui->playBtn->setEnabled(!b);
   ui->pauseBtn->setEnabled(!b);
   ui->stopBtn->setEnabled(!b);
+  setLoading(b);
   if(b){
     CoreAudio::pause();
+  } else {
+    CoreAudio::play();
+  }
+}
+
+void ae::MainWindow::MainWindow::setLoading(bool b) {
+  static QMovie* movie = new QMovie (":/GIF/Loading.gif");
+  movie->setScaledSize(QSize(20,20));
+  if(b){
+    ui->loadingLbl->setMovie(movie);
+    ui->loadingLbl->show();
+    movie->start();
+  } else {
+    ui->loadingLbl->setMovie(nullptr);
+    movie->stop();
+    ui->loadingLbl->hide();
   }
 }

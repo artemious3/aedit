@@ -41,6 +41,7 @@ namespace ae {
         BaseEffect* currentEffect = nullptr;
 
         bool isPressed = false;
+        bool isBlocked = false;
         void keyPressEvent(QKeyEvent* keyEvent) override;
         // void keyReleaseEvent(QKeyEvent* keyEvent);
         Ui::MainWindow *ui;
@@ -73,6 +74,7 @@ namespace ae {
       public:
         const TimelineScene* getTimeline();
         void clearHistory();
+        void blockAudio(bool);
 
       public:
         static ae::MainWindow* getInstance();

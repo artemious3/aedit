@@ -11,10 +11,14 @@
 #include "CoreAudio.h"
 #include <QApplication>
 #include "mainwindow.h"
+#include <QtConcurrent>
+#include <qtconcurrentrun.h>
+#include <qthreadpool.h>
 
 using namespace ae;
 
 void BaseEffect::setUpUi(QWidget* widget ) {
+    tp = new QThreadPool(this);
     gui = widget;
     layout = new QFormLayout(widget);
 
@@ -52,13 +56,19 @@ void BaseEffect::apply(){
     auto max = buf.size - sel.first;
 
     gui->setEnabled(false);
-    qDebug() << max << size;
-    _process(&buf.left[ beg ], size, max, 0);
+    window->blockAudio(true);
+
+
+tp->start([=]{
+     _process(&buf.left[ beg ], size, max, 0);
     reset();    
     _process(&buf.right[ beg ], size, max, 1);
     gui->setEnabled(true);
-
     emit modifiedBuffer(beg, beg+size, objectName());    
+    window->blockAudio(false);
+});
+
+
 }
 
 BaseEffect::~BaseEffect() {

@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <qobject.h>
 #include <qtmetamacros.h>
+#include <QThreadPool>
 
 struct EffectInfo{
     int begin;
@@ -22,6 +23,7 @@ protected:
     QWidget* gui = nullptr;
     QFormLayout* layout = nullptr;
     QPushButton *applyBtn = nullptr, *revertBtn = nullptr, *saveBtn = nullptr;
+    QThreadPool* tp;
 
     public: ~BaseEffect();
 

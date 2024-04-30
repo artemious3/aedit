@@ -140,6 +140,7 @@ void ae::MainWindow::on_effectsBox_textActivated(const QString& text) {
   }
 
   currentEffect->setUpUi(ui->effectWidget);
+  ui->effectWidget->setFocusPolicy(Qt::NoFocus);
   connect(currentEffect, &BaseEffect::modifiedBuffer, this, &MainWindow::onBufferChanged);
 }
 
@@ -157,6 +158,10 @@ void ae::MainWindow::on_selButton_toggled(bool b) {
 }
 
 void ae::MainWindow::keyPressEvent(QKeyEvent* keyEvent) {    
+  QMainWindow::keyPressEvent(keyEvent);
+  if(isBlocked){
+    return;
+  }
   if(keyEvent->key() == Qt::Key_Space){
     if(CoreAudio::isPlaying()){
       qDebug() << "pausing";
@@ -194,4 +199,14 @@ void ae::MainWindow::MainWindow::clearHistory() {
       tlScene->resetEffects();
     ui->historyList->clear();
     tlScene->drawWaveform();
+}
+
+void ae::MainWindow::MainWindow::blockAudio(bool b) {    
+  isBlocked = b;
+  ui->playBtn->setEnabled(!b);
+  ui->pauseBtn->setEnabled(!b);
+  ui->stopBtn->setEnabled(!b);
+  if(b){
+    CoreAudio::pause();
+  }
 }

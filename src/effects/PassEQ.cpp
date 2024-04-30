@@ -2,7 +2,6 @@
 #include "BaseEffect.h"
 #include "CoreAudio.h"
 #include "Utils.h"
-#include "coretypes.h"
 #include <algorithm>
 #include <qcheckbox.h>
 #include <qnamespace.h>
@@ -23,8 +22,7 @@ void PassEQ::processFftChunk(Utils::Frequencies& freqs)
     auto f_per_i = sf / n;
 
     auto decr_func = [=](double x){ return -(x - (passFreq - lastFreq))*(x - (passFreq + lastFreq))/(lastFreq*lastFreq); };
-
-
+    
 if(isHighPass){
 
 for(int i = 0; i < f_ind; ++i){

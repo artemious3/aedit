@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26.4)
 
 set(CMAKE_CXX_STANDARD 17)
-set (CMAKE_CXX_FLAGS "-O2")
+set(CMAKE_CXX_FLAGS "-O2")
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -36,7 +36,6 @@ add_executable(aedit src/main.cpp
         src/core/core-audio/CoreAudio.cpp
         src/core/core-audio/CoreAudio.h
         src/core/core-audio/pa_callback.c
-
 
         src/effects/Gain.cpp
         src/effects/Constructor.cpp

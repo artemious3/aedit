@@ -9,11 +9,11 @@ class TimePitch : public BaseEffect
 
 private:
     float koef = 0.6f;
-
     QDoubleSpinBox* koefBox;
 
 protected:
     virtual void _process(Sample* buf, int size, int max_in, short) override;
+    virtual void apply() override;
     virtual void updateProperties() override;
  
 public:

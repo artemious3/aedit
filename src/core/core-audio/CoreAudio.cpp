@@ -56,6 +56,7 @@ PaError CoreAudio::play() {
     err = Pa_StartStream(stream);
   }
   return err;
+  
 }
 
 PaError CoreAudio::stop() {
@@ -110,3 +111,26 @@ bool ae::CoreAudio::isPlaying() {
   return Pa_IsStreamActive(stream);
 }
 
+void ae::CoreAudio::resizeStream(size_t new_sz) {
+    if(new_sz == buffer.size){
+        return;
+    }
+
+    StereoAudioBuffer new_buf;
+    new_buf.left = new Sample[new_sz];
+    new_buf.right = new Sample[new_sz];
+    new_buf.size = new_sz;
+    new_buf.isStereo = buffer.isStereo;
+    new_buf.current = std::min ( std::max(buffer.current, 0LL) , (long long)new_sz );
+
+    for(int i = 0; i < std::min((long long)new_sz, buffer.size); ++i ){
+        new_buf.left[i] = buffer.left[i];
+        new_buf.right[i] = buffer.right[i];
+    }
+    for(int i = buffer.size; i < new_sz; ++i){
+        new_buf.left[i] = 0;
+        new_buf.right[i] = 0;
+    }
+
+    setBuffer(new_buf);
+}

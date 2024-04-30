@@ -73,9 +73,7 @@ void MainWindow::onError(QAudioDecoder::Error err) { qDebug() << "error!"; }
 
 void MainWindow::onBufReady() {
     CoreAudio::setBuffer(loader->getResultingBuffer());
-    tlScene->resetEffects();
-    ui->historyList->clear();
-    tlScene->drawWaveform();
+    clearHistory();
 }
 
 
@@ -190,4 +188,10 @@ void ae::MainWindow::on_historyList_currentRowChanged(int row) {
 
 void ae::MainWindow::MainWindow::setTimeLabel(QString s) {
   ui->timeLbl->setText(s);    
+}
+
+void ae::MainWindow::MainWindow::clearHistory() {
+      tlScene->resetEffects();
+    ui->historyList->clear();
+    tlScene->drawWaveform();
 }

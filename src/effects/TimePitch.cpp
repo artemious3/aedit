@@ -2,14 +2,15 @@
 
 #include "TimePitch.h"
 #include "CoreAudio.h"
+#include "TimelineScene.h"
 #include "Utils.h"
 #include <qspinbox.h>
 #include <QMessageBox>
 #include "CoreAudio.h"
+#include "mainwindow.h"
 
 void TimePitch::_process(Sample *buf, int size, int max_in, short channel) {
   auto new_size = (int)std::ceil(size * koef);
-  auto new_buf_size = ae::CoreAudio::getBuffer().size - size + new_size;
   Sample* newBuf = new Sample[new_size];
   for(int i = 0; i < new_size; ++i){
       double oldInd = (double)i / koef;
@@ -30,17 +31,74 @@ void TimePitch::_process(Sample *buf, int size, int max_in, short channel) {
       newBuf[i] = val;
   }
 
-  for(int i = 0; i < std::min(size, new_size); ++i){
-      buf[i] = newBuf[i];
+
+  auto after_shift = new_size - size;
+
+  if(after_shift > 0){
+    Utils::shiftBuf(buf, size, max_in, after_shift);
   }
 
-  for(int i = new_size; i < size; ++i){
-    buf[i] = 0;
+  for(int i = 0; i < new_size; ++i){
+    buf[i] = newBuf[i];
+  }
+
+  if(after_shift < 0){
+    Utils::shiftBuf(buf, size, max_in, after_shift);
   }
 
   delete[] newBuf;
 }
 
+
+void TimePitch::apply(){
+  using namespace ae;
+    if(!gui){
+        qDebug() << "BaseEffect: No gui installed!";
+        return;
+    }
+
+    auto window = MainWindow::getInstance();
+
+    updateProperties();
+
+    auto tl =  window->getTimeline();
+    auto sel = tl->getSelection();
+    auto buf = CoreAudio::getBuffer();
+
+    auto beg = sel.first;
+    auto size = sel.second - sel.first;
+
+    if( size <= 1 ){
+        QMessageBox::information(window, "Info", "Select an audio area.");
+        return;
+    }
+
+    auto max = buf.size - sel.first;
+
+    auto new_size = buf.size - size + koef * size;
+    if(new_size > buf.size ){
+      CoreAudio::resizeStream(new_size);
+      buf = CoreAudio::getBuffer();
+    }
+
+
+    gui->setEnabled(false);
+    _process(buf.left + beg, size, max, 0);
+    _process(buf.right + beg, size, max, 1);
+    gui->setEnabled(true);
+
+
+    if(new_size < buf.size){
+       CoreAudio::resizeStream(new_size);
+       buf = CoreAudio::getBuffer();
+    }
+
+    emit modifiedBuffer(beg, beg + size*koef, "TimePitch");
+
+
+    window->clearHistory();
+
+}
 
 
 

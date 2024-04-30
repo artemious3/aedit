@@ -50,6 +50,8 @@ class CoreAudio {
 
         static void initializeTestStream();
 
+        static void resizeStream(size_t new_sz);
+
 
     };
 

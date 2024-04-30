@@ -13,10 +13,10 @@ Chorus::Chorus(){
 void Chorus::processFftChunk(Utils::Frequencies& freqs) {
     std::random_device dev;
     std::mt19937 gen(dev());
-    std::uniform_real_distribution<> rnd(-1.0,1.0);
+    std::uniform_real_distribution<> rnd(0.0,  M_PI);
 
     for(int i = 0; i < freqs.size(); ++i){
-        auto ph =  std::atan2(freqs[i].imag(), freqs[i].real()) * rnd(gen);
+        auto ph =  std::atan2(freqs[i].imag(), freqs[i].real()) + rnd(gen);
         auto ampl =  (double)std::abs(freqs[i]);
         auto c = std::polar(ampl, ph);
         freqs[i] = c;

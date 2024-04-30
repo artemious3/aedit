@@ -10,9 +10,9 @@ struct ae_signal{
 };
 
 void Pitch::processFftChunk(Utils::Frequencies &freqs) {
-  auto n = freqs.size();
-  auto n_h = freqs.size() / 2;
-  auto hop = n_h;
+  auto n = CHUNK_SIZE;
+  auto n_h = CHUNK_SIZE / 2;
+  auto hop = HOP_SIZE;
 
   Utils::Frequencies new_freqs( freqs.size());
 
@@ -24,7 +24,7 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
     auto cur = freqs[i];
     float magn =  std::abs(cur);
     float phase = std::atan2(cur.imag(), cur.real());
-    float bin_freq = 2 * M_PI * (double)i / CHUNK_SIZE;
+    float bin_freq = 2 * M_PI * (double)i / (float)CHUNK_SIZE;
 
     //actual change in phase since last chunk
     auto act_dphase = phase - lastPhases[i];
@@ -33,7 +33,7 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 
     auto freq_diverg = Utils::normalise( act_dphase - exp_dphase );
     //smth from calculus`
-    double bin_diverg = freq_diverg * CHUNK_SIZE / (2.0 * M_PI) / hop;
+    double bin_diverg = freq_diverg * (float)CHUNK_SIZE / (2.0 * M_PI) / (float)hop;
 
     analysis[i].bin_freq = (float)i + bin_diverg;
     analysis[i].magn = magn;
@@ -44,6 +44,7 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 //2. MODIFYING
 
  std::vector<ae_signal> synthesis (freqs.size(), {0,0});
+
 
 for(int i = 0; i <= n_h; ++i){
     int new_i = std::floor((float)i * koef + 0.5);
@@ -58,7 +59,7 @@ for(int i = 0; i <= n_h; ++i){
     //synthesis[n - new_i].bin_freq = analysis[i].bin_freq * koef;
 }
 
-// 3. SYNTHESYS
+// 3. SYNTHESYS`
 
 for(int i = 0; i <= n_h; ++i){
     auto bin_freq = 2 * M_PI * (float)i / CHUNK_SIZE;
@@ -99,7 +100,7 @@ Pitch::Pitch() : lastPhases(CHUNK_SIZE, 0), lastSynthPhases(CHUNK_SIZE, 0) {}
 
 void Pitch::reset() {
   for(int i = 0; i < CHUNK_SIZE; ++i){
-    lastPhases[i] = 0;
-    lastSynthPhases[i] = 0;
+    lastPhases[i] = 0.0;
+    lastSynthPhases[i] = 0.0;
   }    
 }

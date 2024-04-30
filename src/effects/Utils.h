@@ -127,7 +127,7 @@ public:
     auto size = std::min(freqs_conj.size(), max_len);
 
     for (int i = 0; i < size; ++i) {
-      out[i] = (freqs_conj[i].real() / size);
+      out[i] = freqs_conj[i].real();
     }
   }
 

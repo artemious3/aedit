@@ -72,6 +72,7 @@ namespace ae {
 
       public:
         const TimelineScene* getTimeline();
+        void clearHistory();
 
       public:
         static ae::MainWindow* getInstance();

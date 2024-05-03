@@ -19,7 +19,7 @@
      <rect>
       <x>160</x>
       <y>60</y>
-      <width>1201</width>
+      <width>1131</width>
       <height>381</height>
      </rect>
     </property>
@@ -40,9 +40,9 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>1370</x>
+      <x>1300</x>
       <y>10</y>
-      <width>181</width>
+      <width>251</width>
       <height>431</height>
      </rect>
     </property>
@@ -120,13 +120,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QFrame" name="effectWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -149,7 +142,7 @@
      <rect>
       <x>160</x>
       <y>10</y>
-      <width>1201</width>
+      <width>1131</width>
       <height>48</height>
      </rect>
     </property>
@@ -181,7 +174,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QWidget" name="widget" native="true"/>
+      <widget class="QLabel" name="loadingLbl">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="playBtn">
@@ -278,22 +275,6 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="loadingLbl">
-    <property name="geometry">
-     <rect>
-      <x>1370</x>
-      <y>450</y>
-      <width>181</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -324,6 +305,9 @@
   <action name="actionExport">
    <property name="text">
     <string>Export</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
  </widget>

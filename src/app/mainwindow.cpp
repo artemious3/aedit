@@ -210,6 +210,8 @@ void ae::MainWindow::MainWindow::blockAudio(bool b) {
   ui->pauseBtn->setEnabled(!b);
   ui->stopBtn->setEnabled(!b);
   setLoading(b);
+  ui->actionOpen->setEnabled(!b);
+  ui->actionExport->setEnabled(!b);
   if(b){
     CoreAudio::pause();
   } else {
@@ -222,11 +224,11 @@ void ae::MainWindow::MainWindow::setLoading(bool b) {
   movie->setScaledSize(QSize(20,20));
   if(b){
     ui->loadingLbl->setMovie(movie);
-    ui->loadingLbl->show();
+    //ui->loadingLbl->show();
     movie->start();
   } else {
-    ui->loadingLbl->setMovie(nullptr);
+    ui->loadingLbl->clear();
     movie->stop();
-    ui->loadingLbl->hide();
+    //ui->loadingLbl->hide();
   }
 }

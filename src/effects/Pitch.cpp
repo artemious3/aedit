@@ -57,6 +57,9 @@ for(int i = 0; i <= n_h; ++i){
     //synthesis[n-new_i].magn += analysis[i].magn;
     synthesis[new_i].bin_freq = analysis[i].bin_freq * koef;
     //synthesis[n - new_i].bin_freq = analysis[i].bin_freq * koef;
+
+
+    
 }
 
 // 3. SYNTHESYS`

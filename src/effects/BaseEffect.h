@@ -9,6 +9,9 @@
 #include <qtmetamacros.h>
 #include <QThreadPool>
 
+
+
+#define CHECK_STOP if(stopRequest){return;}
 struct EffectInfo{
     int begin;
     int end;
@@ -24,6 +27,9 @@ protected:
     QFormLayout* layout = nullptr;
     QPushButton *applyBtn = nullptr, *revertBtn = nullptr, *saveBtn = nullptr;
 
+    bool stopRequest = false;
+    bool finished = true; 
+
     public: ~BaseEffect();
 
 protected:
@@ -36,6 +42,9 @@ protected slots:
 
 public:
     virtual void setUpUi(QWidget*);
+
+    void requestStop();
+    bool hasStopped();
 
 signals:
     void modifiedBuffer(int, int, QString);

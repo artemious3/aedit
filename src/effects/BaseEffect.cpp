@@ -33,6 +33,8 @@ void BaseEffect::setUpUi(QWidget *widget) {
 }
 
 void BaseEffect::apply() {
+  finished = false;
+
   if (!gui) {
     qDebug() << "BaseEffect: No gui installed!";
     return;
@@ -67,9 +69,18 @@ void BaseEffect::apply() {
     emit modifiedBuffer(beg, beg + size, objectName());
     gui->setEnabled(true);
     window->blockAudio(false);
+    finished = true;
   });
 }
 
 BaseEffect::~BaseEffect() { qDeleteAll(gui->children()); }
 
 void BaseEffect::reset() {}
+
+void BaseEffect::requestStop() {
+  stopRequest = true;    
+}
+
+bool BaseEffect::hasStopped(){
+  return finished;
+}

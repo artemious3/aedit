@@ -23,6 +23,7 @@
 #include <qmessagebox.h>
 #include <qnamespace.h>
 #include <qpushbutton.h>
+#include <qthread.h>
 #include <qwindowdefs.h>
 #include <stdexcept>
 #include "CoreAudio.h"
@@ -65,6 +66,11 @@ MainWindow::MainWindow(QWidget *parent)
   }
 
 MainWindow::~MainWindow() {
+  currentEffect->requestStop();
+  while(!currentEffect->hasStopped()){
+    QThread::msleep(100);
+  }
+
   CoreAudio::terminate();
   delete loader;
   delete ui;
@@ -199,7 +205,7 @@ void ae::MainWindow::MainWindow::setTimeLabel(QString s) {
 }
 
 void ae::MainWindow::MainWindow::clearHistory() {
-      tlScene->resetEffects();
+    tlScene->resetEffects();
     ui->historyList->clear();
     tlScene->drawWaveform();
 }

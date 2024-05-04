@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26.4)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-O2")
+#set(CMAKE_CXX_FLAGS "-O2")
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -33,6 +33,7 @@ add_executable(aedit src/main.cpp
         src/app/timeline/TimelineScene.cpp
         src/app/timeline/AudioPixmap.cpp
         src/app/timeline/EffectSelection.cpp
+        src/app/exporter.cpp
 
         src/core/core-audio/CoreInfo.cpp
         src/core/core-audio/CoreAudio.cpp

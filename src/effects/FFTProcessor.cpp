@@ -30,14 +30,18 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
       inBuf[inb_i] = 0;
     }
 
+    CHECK_STOP
+
     freqs = Utils::fft(inBuf, CHUNK_SIZE);
     processFftChunk(freqs);
     Utils::ifft(freqs, outBuf, CHUNK_SIZE);
 
+    CHECK_STOP
 
     for(int res_i = i, out_i = 0; out_i < curChunkSize; ++res_i, ++out_i){
       resBuf[res_i] += outBuf[out_i] * win[out_i] / CHUNK_SIZE;
     }
+
   }
 
   for(int i = 0; i < size; ++i){

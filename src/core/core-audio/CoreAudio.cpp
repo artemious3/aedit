@@ -101,8 +101,8 @@ void ae::CoreAudio::setBuffer(StereoAudioBuffer buffer_) {
 
 StereoAudioBuffer ae::CoreAudio::getBuffer() { return buffer; }
 
-void ae::CoreAudio::setCurrentIndex(size_t ind) {
-  buffer.current = std::min((size_t)buffer.size, ind);
+void ae::CoreAudio::setCurrentIndex(long ind) {
+  buffer.current = std::max(0L, std::min((long)buffer.size, ind) );
 }
 
 bool ae::CoreAudio::isPlaying() {

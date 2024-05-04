@@ -67,6 +67,8 @@ namespace ae {
         void on_selButton_toggled(bool b);
         void on_historyList_currentRowChanged(int row);
 
+        void on_selectionChanged(int beg, int end);
+
         void onError(QAudioDecoder::Error err );
 
         void onBufferChanged(int, int, QString);

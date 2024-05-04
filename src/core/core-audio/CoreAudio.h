@@ -43,7 +43,7 @@ class CoreAudio {
         static PaError stop();
         static PaError pause();
 
-        static void setCurrentIndex(size_t ind);
+        static void setCurrentIndex(long ind);
         static void setBuffer(StereoAudioBuffer buffer);
         static StereoAudioBuffer getBuffer();
         static bool isPlaying();

@@ -22,7 +22,7 @@ class Pitch : public FFTProcessor{
     std::vector<ae_signal> analysis;
     std::vector<ae_signal> synthesis;
 
-    QDoubleSpinBox* pitchShiftBox;
+    QSpinBox* pitchShiftBox;
     void processFftChunk(Utils::Frequencies& freqs) override;
     void updateProperties() override;
     //void _process(Sample*, int, int) override;

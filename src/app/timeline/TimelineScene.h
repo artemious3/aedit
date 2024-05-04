@@ -77,9 +77,9 @@ public:
   std::pair<int, int> getSelection() const;
   void setMouseBehaviour(MouseBehaviour mb);
 
-
   signals:
     void posPointerChanged();
+    void selectionChanged(int beg, int end);
 };
 
 #endif // AEDIT_TIMELINESCENE_H

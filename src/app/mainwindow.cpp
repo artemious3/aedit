@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
   on_effectsBox_textActivated("Gain");
 
   connect(loader, &Loader::onFinish, this, &MainWindow::onBufReady);
+  connect(tlScene, &TimelineScene::selectionChanged, this, &MainWindow::on_selectionChanged);
   foreach( auto w, findChildren<QWidget*>() ){
     w->setFocusPolicy(Qt::NoFocus);
   }
@@ -156,6 +157,8 @@ void ae::MainWindow::on_effectsBox_textActivated(const QString& text) {
 void ae::MainWindow::on_navButton_toggled(bool b) {
   if(b){
     tlScene->setMouseBehaviour(MouseBehaviour::Navigation);
+    ui->fromLbl->setText("--:--:--.---");
+    ui->toLbl->setText("--:--:--.---");
   }
 }
 
@@ -237,4 +240,14 @@ void ae::MainWindow::MainWindow::setLoading(bool b) {
     movie->stop();
     //ui->loadingLbl->hide();
   }
+}
+
+void ae::MainWindow::on_selectionChanged(int beg, int end) {    
+  auto buf = CoreAudio::getBuffer();
+  int sampPerPx = buf.size  / tlScene->width();
+  if(beg > end){
+    std::swap(beg, end);
+  }
+  ui->fromLbl->setText(CoreInfo::getTimeString( sampPerPx* beg));
+  ui->toLbl->setText(CoreInfo::getTimeString( sampPerPx* end));
 }

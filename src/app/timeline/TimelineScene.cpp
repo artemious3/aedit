@@ -18,6 +18,7 @@
 #include <qgraphicsscene.h>
 #include <qnamespace.h>
 #include <qtimer.h>
+#include <qtmetamacros.h>
 
 TimelineScene::TimelineScene(QWidget *widget) : QGraphicsScene(widget) {
   // buffer = {nullptr, nullptr, 0, 0, false};
@@ -72,8 +73,6 @@ void TimelineScene::drawWaveform() {
 void TimelineScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
   QGraphicsScene::mousePressEvent(event);
   pressed = true;
-
-
   views().first()->setFocus();
   if (mBehaviour == MouseBehaviour::Selection) {
     selectionPress(event);
@@ -112,14 +111,16 @@ void TimelineScene::selectionPress(QGraphicsSceneMouseEvent *event) {
 
 void TimelineScene::selectionMove(QGraphicsSceneMouseEvent *event) {
   selectionEnd = event->scenePos().x();
+  emit selectionChanged(selectionStart, selectionEnd);
   drawSelection();
 }
+
 
 void TimelineScene::navigate(QGraphicsSceneMouseEvent *event) {
   auto x = event->scenePos().x();
   qDebug() << x;
   auto buf_size = ae::CoreAudio::getBuffer().size;
-  auto ind = ((double)x / leftPixmap->pixmap().width()) * buf_size;
+  int ind = ((double)x / leftPixmap->pixmap().width()) * buf_size;
   ae::CoreAudio::setCurrentIndex(ind);
   updatePosPointer();
 }

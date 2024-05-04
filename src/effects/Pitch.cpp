@@ -11,6 +11,13 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 
   Utils::Frequencies new_freqs(freqs.size());
 
+  for(int i = 0; i < n_h; ++i){
+    synthesis[i] = {0.0,0.0};
+  }
+  // for(int i= 0; i < n_h; ++i){
+  //   analysis[i] = {0.0, 0.0};
+  // }
+
   // 1. ANALYSIS
   for (int i = 0; i <= n_h; ++i) {
     auto cur = freqs[i];
@@ -33,12 +40,11 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 
     lastPhases[i] = phase;
   }
+
   CHECK_STOP
 
   // 2. MODIFYING
-  for(int i = 0; i < n_h; ++i){
-    synthesis[i] = {0,0};
-  }
+
 
   for (int i = 0; i <= n_h; ++i) {
     int new_i = std::floor((float)i * koef + 0.5);
@@ -76,15 +82,15 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   freqs = std::move(new_freqs);
 }
 
-void Pitch::updateProperties() { koef = pitchShiftBox->value(); }
+void Pitch::updateProperties() { koef = std::pow(2.0, (double)pitchShiftBox->value() / 1200); }
 
 void Pitch::setUpUi(QWidget *widget) {
   BaseEffect::setUpUi(widget);
-  pitchShiftBox = new QDoubleSpinBox();
-  pitchShiftBox->setMinimum(0.2);
-  pitchShiftBox->setMaximum(3.0);
-  pitchShiftBox->setValue(1.12);
-  layout->addRow("Pitch shift", pitchShiftBox);
+  pitchShiftBox = new QSpinBox();
+  pitchShiftBox->setMinimum(-2400);
+  pitchShiftBox->setMaximum(2400);
+  pitchShiftBox->setValue(400);
+  layout->addRow("Pitch shift (cents)", pitchShiftBox);
 }
 
 Pitch::Pitch()

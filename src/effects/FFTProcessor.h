@@ -9,8 +9,8 @@ class FFTProcessor : public BaseEffect{
 
 protected:
     
-    int CHUNK_SIZE = 1024;
-    int HOP_SIZE = 200;
+    int CHUNK_SIZE = 2048;
+    int HOP_SIZE = 512;
     int HOP_DIVISOR = 2;
 
 private:

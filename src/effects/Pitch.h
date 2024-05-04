@@ -8,11 +8,19 @@
 #include <QCheckBox>
 #include <QSpinBox>
 
+struct ae_signal {
+  float magn;
+  float bin_freq;
+};
+
 class Pitch : public FFTProcessor{
 
     double koef = 1.4;
     std::vector<float> lastPhases;
     std::vector<float> lastSynthPhases;
+
+    std::vector<ae_signal> analysis;
+    std::vector<ae_signal> synthesis;
 
     QDoubleSpinBox* pitchShiftBox;
     void processFftChunk(Utils::Frequencies& freqs) override;

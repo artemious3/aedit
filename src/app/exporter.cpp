@@ -28,8 +28,8 @@ void Exporter::exportCoreBuffer(const QString& fname) {
 
         stream.writeRawData(reinterpret_cast<const char*>(&header), sizeof(WAV_HEADER));
         for(int i = 0; i < buf.size; ++i){
-            int16_t l = std::min((int16_t)(buf.left[i] * (float)KOEF), KOEF);
-            int16_t r =  std::min((int16_t)(buf.right[i] * (float)KOEF), KOEF);
+            int16_t l = std::min((int16_t)(buf.left[i] * (Sample)KOEF), KOEF);
+            int16_t r =  std::min((int16_t)(buf.right[i] * (Sample)KOEF), KOEF);
             stream.writeRawData( reinterpret_cast<const char*>(&l), 2);
             stream.writeRawData( reinterpret_cast<const char*>(&r), 2);
         }

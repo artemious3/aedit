@@ -4,19 +4,12 @@
 #include <complex>
 #include <qspinbox.h>
 
-struct ae_signal {
-  float magn;
-  float bin_freq;
-};
-
 void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   auto n = CHUNK_SIZE;
   auto n_h = CHUNK_SIZE / 2;
   auto hop = HOP_SIZE;
 
   Utils::Frequencies new_freqs(freqs.size());
-
-  std::vector<ae_signal> analysis(freqs.size(), {0, 0});
 
   // 1. ANALYSIS
   for (int i = 0; i <= n_h; ++i) {
@@ -43,8 +36,9 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   CHECK_STOP
 
   // 2. MODIFYING
-
-  std::vector<ae_signal> synthesis(freqs.size(), {0, 0});
+  for(int i = 0; i < n_h; ++i){
+    synthesis[i] = {0,0};
+  }
 
   for (int i = 0; i <= n_h; ++i) {
     int new_i = std::floor((float)i * koef + 0.5);
@@ -93,7 +87,9 @@ void Pitch::setUpUi(QWidget *widget) {
   layout->addRow("Pitch shift", pitchShiftBox);
 }
 
-Pitch::Pitch() : lastPhases(CHUNK_SIZE, 0), lastSynthPhases(CHUNK_SIZE, 0) {}
+Pitch::Pitch()
+    : lastPhases(CHUNK_SIZE, 0), lastSynthPhases(CHUNK_SIZE, 0),
+      synthesis(CHUNK_SIZE/2, {0, 0}), analysis(CHUNK_SIZE/2, {0, 0}) {}
 
 void Pitch::reset() {
   for (int i = 0; i < CHUNK_SIZE; ++i) {

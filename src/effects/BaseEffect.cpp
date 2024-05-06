@@ -37,6 +37,7 @@ void BaseEffect::apply() {
 
   if (!gui) {
     qDebug() << "BaseEffect: No gui installed!";
+    finished = true;
     return;
   }
 
@@ -53,6 +54,7 @@ void BaseEffect::apply() {
 
   if (size <= 1) {
     QMessageBox::information(window, "Info", "Select an audio area.");
+    finished = true;
     return;
   }
 

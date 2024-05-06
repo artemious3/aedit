@@ -26,6 +26,7 @@ class PassEQ : public FFTProcessor {
 
 public:
     void setUpUi(QWidget*) override;
+    PassEQ();
 
 };
 

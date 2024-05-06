@@ -1,6 +1,7 @@
 #include "PassEQ.h"
 #include "BaseEffect.h"
 #include "CoreAudio.h"
+#include "FFTProcessor.h"
 #include "Utils.h"
 #include <QSpinBox>
 #include <algorithm>
@@ -29,13 +30,13 @@ void PassEQ::processFftChunk(Utils::Frequencies &freqs) {
     for (int i = 0; i < f_ind; ++i) {
       auto freq = f_per_i * i;
       freqs[i] *= std::max(0.0, decr_func(freq));
-      freqs[n - i] *= std::max(0.0, decr_func(freq));
+      freqs[n - i] = std::conj(freqs[i]);
     }
   } else {
     for (int i = f_ind; i < n_h; ++i) {
       auto freq = f_per_i * i;
       freqs[i] *= std::max(0.0, decr_func(freq));
-      freqs[n - i] *= std::max(0.0, decr_func(freq));
+      freqs[n - i] = std::conj(freqs[i]);
     }
 
   }
@@ -65,4 +66,7 @@ void PassEQ::updateProperties() {
   passFreq = (double)passSBox->value();
   lastFreq = passFreq + (double)lastSBox->value();
   isHighPass = chkBox->isChecked();
+}
+PassEQ::PassEQ() : FFTProcessor(4096, 1024) {
+    
 }

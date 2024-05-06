@@ -67,7 +67,7 @@ void BaseEffect::apply() {
     _process(&buf.left[beg], size, max, 0);
     reset();
     _process(&buf.right[beg], size, max, 1);
-
+    
     emit modifiedBuffer(beg, beg + size, objectName());
     gui->setEnabled(true);
     window->blockAudio(false);

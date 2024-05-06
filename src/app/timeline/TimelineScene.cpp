@@ -110,7 +110,7 @@ void TimelineScene::selectionPress(QGraphicsSceneMouseEvent *event) {
 }
 
 void TimelineScene::selectionMove(QGraphicsSceneMouseEvent *event) {
-  selectionEnd = event->scenePos().x();
+  selectionEnd = std::min( std::max(0.0, event->scenePos().x()), width() );
   emit selectionChanged(selectionStart, selectionEnd);
   drawSelection();
 }

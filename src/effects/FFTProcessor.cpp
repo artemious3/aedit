@@ -3,6 +3,7 @@
 #include "Utils.h"
 #include "coretypes.h"
 #include <algorithm>
+#include <cassert>
 #include <qstringtokenizer.h>
 
 void FFTProcessor::setUpUi(QWidget *widget) { BaseEffect::setUpUi(widget); }
@@ -10,7 +11,7 @@ void FFTProcessor::setUpUi(QWidget *widget) { BaseEffect::setUpUi(widget); }
 void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
   Sample *inBuf = new Sample[CHUNK_SIZE];
   Sample *outBuf = new Sample[CHUNK_SIZE];
-  Sample *resBuf = new Sample[size + CHUNK_SIZE];
+  Sample *resBuf = new Sample[size + CHUNK_SIZE + HOP_SIZE];
   for (int i = 0; i < size + CHUNK_SIZE; ++i) {
     resBuf[i] = 0;
   }
@@ -19,7 +20,7 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
 
   auto hop = HOP_SIZE;
   auto win =
-      Utils::cosSumWindow(std::min(HOP_SIZE * 4, CHUNK_SIZE), CHUNK_SIZE);
+      Utils::cosSumWindow(HOP_SIZE * 4, CHUNK_SIZE);
 
   for (int i = 0; i < size; i += hop) {
     auto curChunkSize = std::min(CHUNK_SIZE, max_range - i);
@@ -40,7 +41,7 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
     CHECK_STOP
 
     for (int res_i = i, out_i = 0; out_i < curChunkSize; ++res_i, ++out_i) {
-      resBuf[res_i] += outBuf[out_i] * win[out_i] / CHUNK_SIZE;
+      resBuf[res_i] += outBuf[out_i] * win[out_i] / CHUNK_SIZE ;
     }
   }
 
@@ -54,4 +55,6 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
 }
 
 FFTProcessor::FFTProcessor(int chunk, int hop)
-    : CHUNK_SIZE(chunk), HOP_SIZE(hop) {}
+    : CHUNK_SIZE(chunk), HOP_SIZE(hop) {
+      assert(4 * HOP_SIZE <= CHUNK_SIZE);
+    }

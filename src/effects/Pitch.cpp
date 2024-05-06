@@ -12,19 +12,19 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 
   Utils::Frequencies new_freqs(freqs.size());
 
-  for(int i = 0; i <= n_h; ++i){
-    synthesis[i] = {0.0,0.0};
-  }
+
   // for(int i= 0; i < n_h; ++i){
   //   analysis[i] = {0.0, 0.0};
   // }
+
+  float bin_freq_step = 2 * M_PI / (float)CHUNK_SIZE;
+  float bin_freq = 0;
 
   // 1. ANALYSIS
   for (int i = 0; i <= n_h; ++i) {
     auto cur = freqs[i];
     float magn = std::abs(cur);
     float phase = std::atan2(cur.imag(), cur.real());
-    float bin_freq = 2 * M_PI * (double)i / (float)CHUNK_SIZE;
 
     // actual change in phase since last chunk
     auto act_dphase = phase - lastPhases[i];
@@ -38,35 +38,38 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 
     analysis[i].bin_freq = (float)i + bin_diverg;
     analysis[i].magn = magn;
-
     lastPhases[i] = phase;
+    bin_freq += bin_freq_step;
   }
 
   CHECK_STOP
 
   // 2. MODIFYING
 
+  for(int i = 0; i <= n_h; ++i){
+    synthesis[i] = {0.0f,0.0f};
+  }
 
+  float frac_bin = 0;
   for (int i = 0; i <= n_h; ++i) {
-    int new_i = std::floor((float)i * koef + 0.5);
+    int new_i = std::floor(frac_bin + 0.5f);
 
     if (new_i > n_h) {
       break; // we can break, further values only get greater
     }
 
     synthesis[new_i].magn += analysis[i].magn;
-    // synthesis[n-new_i].magn += analysis[i].magn;
     synthesis[new_i].bin_freq = analysis[i].bin_freq * koef;
-    // synthesis[n - new_i].bin_freq = analysis[i].bin_freq * koef;
+    frac_bin += koef;
   }
 
   CHECK_STOP
 
   // 3. SYNTHESYS`
 
+  bin_freq = 0;
   for (int i = 0; i <= n_h; ++i) {
-    auto bin_freq = 2 * M_PI * (float)i / CHUNK_SIZE;
-
+  
     auto bin_diverg = synthesis[i].bin_freq - (float)i;
     float dphase = bin_diverg * 2.0 * M_PI * (float)hop / (float)CHUNK_SIZE;
     dphase += bin_freq * hop;
@@ -78,6 +81,7 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 
     lastSynthPhases[i] = act_phase;
     // lastSynthPhases[n-i] = act_phase;
+    bin_freq += bin_freq_step;
   }
 
   freqs = std::move(new_freqs);

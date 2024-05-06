@@ -69,6 +69,8 @@ public:
   void drawWaveform();
   void drawSelection();
 
+  const QColor& getLastEffectColor();
+
 
   void pushEffect(int beg, int end);
   void selectEffect(int i);

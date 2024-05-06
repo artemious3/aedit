@@ -22,6 +22,9 @@ public:
 protected:
     //void updateProperties() override;
     void _process(Sample*, int, int, short) override;
+
+    FFTProcessor(int chunk, int hop);
+    FFTProcessor() = default;
 }; 
 
 #endif /* C9DC23A8_022F_4F2E_933B_9B0CCC66B301 */

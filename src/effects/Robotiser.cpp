@@ -1,11 +1,10 @@
 #include "Robotiser.h"
 #include "BaseEffect.h"
+#include "FFTProcessor.h"
 #include <cmath>
 
 
-Robotiser::Robotiser(){
-    CHUNK_SIZE = 512;
-    HOP_SIZE = 256;
+Robotiser::Robotiser() : FFTProcessor(512, 256) {
 }
 
 void Robotiser::processFftChunk(Utils::Frequencies& freqs) {

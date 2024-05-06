@@ -1,12 +1,13 @@
 #include "Chorus.h"
 #include "BaseEffect.h"
+#include "FFTProcessor.h"
 #include "Utils.h"
 #include <cmath>
 #include <complex>
 #include <random>
 
 
-Chorus::Chorus(){
+Chorus::Chorus() : FFTProcessor(){
     //CHUNK_SIZE = 256;    
 }
 

@@ -18,10 +18,13 @@
 #include <qaudiodecoder.h>
 #include <qaudioformat.h>
 #include <qfiledialog.h>
+#include <qicon.h>
+#include <qlistwidget.h>
 #include <qlogging.h>
 #include <qmainwindow.h>
 #include <qmessagebox.h>
 #include <qnamespace.h>
+#include <qpixmap.h>
 #include <qpushbutton.h>
 #include <qthread.h>
 #include <qwindowdefs.h>
@@ -133,7 +136,14 @@ const TimelineScene* ae::MainWindow::getTimeline() {
 void ae::MainWindow::onBufferChanged(int beg, int end, QString changeInfo) {
   tlScene->drawWaveform();
   tlScene->pushEffect(beg, end);
-  ui->historyList->addItem(changeInfo);
+
+  auto last_col = tlScene->getLastEffectColor();
+  QPixmap pm(16,16);
+  pm.fill(last_col);
+  auto item = new QListWidgetItem(changeInfo);
+  item->setIcon(QIcon(pm));
+
+  ui->historyList->addItem(item);
   ui->historyList->setCurrentRow(ui->historyList->count() - 1);
 }
 

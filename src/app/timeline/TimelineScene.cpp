@@ -206,7 +206,6 @@ void TimelineScene::pushEffect(int beg, int end) {
   new_eff->setZValue(8.0);
   addItem(new_eff);
   effects.push_back(new_eff);
-
   selectEffect(effects.size() - 1);
 }
 
@@ -228,4 +227,8 @@ void TimelineScene::resetEffects() {
   qDeleteAll(effects);
   effects.clear();
   selectedEffect = nullptr;
+}
+
+const QColor& TimelineScene::getLastEffectColor() {
+  return effects.back()->brush().color();    
 }

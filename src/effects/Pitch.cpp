@@ -1,5 +1,6 @@
 #include "Pitch.h"
 #include "BaseEffect.h"
+#include "FFTProcessor.h"
 #include "Utils.h"
 #include <complex>
 #include <qspinbox.h>
@@ -11,7 +12,7 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
 
   Utils::Frequencies new_freqs(freqs.size());
 
-  for(int i = 0; i < n_h; ++i){
+  for(int i = 0; i <= n_h; ++i){
     synthesis[i] = {0.0,0.0};
   }
   // for(int i= 0; i < n_h; ++i){
@@ -94,8 +95,11 @@ void Pitch::setUpUi(QWidget *widget) {
 }
 
 Pitch::Pitch()
-    : lastPhases(CHUNK_SIZE, 0), lastSynthPhases(CHUNK_SIZE, 0),
-      synthesis(CHUNK_SIZE/2, {0, 0}), analysis(CHUNK_SIZE/2, {0, 0}) {}
+: FFTProcessor(2048, 512), lastSynthPhases(CHUNK_SIZE, 0.0), lastPhases(CHUNK_SIZE, 0.0),
+     synthesis(CHUNK_SIZE/2 + 1, {0, 0}), analysis(CHUNK_SIZE/2 + 1, {0, 0}) {
+
+
+      }
 
 void Pitch::reset() {
   for (int i = 0; i < CHUNK_SIZE; ++i) {

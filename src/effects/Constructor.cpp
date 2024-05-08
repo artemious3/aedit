@@ -23,10 +23,11 @@ BaseEffect* Constructor::getEffect(const std::string& name){
     } else if(name == "Robotiser"){
         effect = new Robotiser{};
         effect->setObjectName("Robotiser");
-    } else if(name == "Chorus"){
-        effect = new Chorus{};
-        effect->setObjectName("Chorus");
-    } else if(name == "Pitch"){
+    }
+    // } else if(name == "Chorus"){
+    //     effect = new Chorus{};
+    //     effect->setObjectName("Chorus"); }
+     else if(name == "Pitch"){
         effect = new Pitch{};
         effect->setObjectName("Pitch");
     } else if (name == "TimePitch"){

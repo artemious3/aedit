@@ -223,18 +223,27 @@ void ae::MainWindow::MainWindow::clearHistory() {
     tlScene->drawWaveform();
 }
 
-void ae::MainWindow::MainWindow::blockAudio(bool b) {    
+void ae::MainWindow::MainWindow::blockAudio(bool b) {  
+  static bool wasPlaying;
+
   isBlocked = b;
+
   ui->playBtn->setEnabled(!b);
   ui->pauseBtn->setEnabled(!b);
   ui->stopBtn->setEnabled(!b);
+  ui->effectsBox->setEnabled(!b);
   setLoading(b);
   ui->actionOpen->setEnabled(!b);
   ui->actionExport->setEnabled(!b);
+
+  
   if(b){
+    wasPlaying = CoreAudio::isPlaying();
     CoreAudio::pause();
   } else {
-    CoreAudio::play();
+    if(wasPlaying)
+     CoreAudio::play();
+
   }
 }
 

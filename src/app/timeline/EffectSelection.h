@@ -7,10 +7,10 @@
 
 class EffectSelection : public QGraphicsRectItem{
 
-    static const int DEF_SATURATION = 100;
+    static const int DEF_SATURATION = 190;
     static const int DEF_OPACITY = 60;
     static const int DEF_VALUE = 100;
-    static const int HUE_STEP = 95;
+    static const int HUE_STEP = 45;
     static const int FONT_SIZE = 9;
 
     int beg = 0, end = 0;

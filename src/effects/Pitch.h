@@ -3,26 +3,27 @@
 
 #include "FFTProcessor.h"
 #include "Utils.h"
+#include <qcheckbox.h>
 #include <qspinbox.h>
 #include <qwidget.h>
 #include <QCheckBox>
 #include <QSpinBox>
 
 struct ae_signal {
-  float magn;
-  float bin_freq;
+  double magn;
+  double bin_freq;
 };
 
 class Pitch : public FFTProcessor{
 
     double koef = 1.4;
-    std::vector<float> lastPhases;
-    std::vector<float> lastSynthPhases;
-
+    std::vector<double> lastPhases;
+    std::vector<double> lastSynthPhases;
     std::vector<ae_signal> analysis;
     std::vector<ae_signal> synthesis;
 
     QSpinBox* pitchShiftBox;
+    QCheckBox* qualityBox;
     void processFftChunk(Utils::Frequencies& freqs) override;
     void updateProperties() override;
     //void _process(Sample*, int, int) override;

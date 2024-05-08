@@ -3,6 +3,7 @@
 #include "FFTProcessor.h"
 #include "Utils.h"
 #include <complex>
+#include <qcheckbox.h>
 #include <qspinbox.h>
 
 void Pitch::processFftChunk(Utils::Frequencies &freqs) {
@@ -17,26 +18,26 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   //   analysis[i] = {0.0, 0.0};
   // }
 
-  float bin_freq_step = 2 * M_PI / (float)CHUNK_SIZE;
-  float bin_freq = 0;
+  double bin_freq_step = 2 * M_PI / (float)CHUNK_SIZE;
+  double bin_freq = 0;
 
   // 1. ANALYSIS
   for (int i = 0; i <= n_h; ++i) {
-    auto cur = freqs[i];
-    float magn = std::abs(cur);
-    float phase = std::atan2(cur.imag(), cur.real());
+    std::complex<double> cur = freqs[i];
+    double magn = std::abs(cur);
+    double phase = std::atan2(cur.imag(), cur.real());
 
     // actual change in phase since last chunk
-    auto act_dphase = phase - lastPhases[i];
+    double act_dphase = phase - lastPhases[i];
     // expected change, as if it was a constant sinusoid
-    auto exp_dphase = bin_freq * hop;
+    double exp_dphase = bin_freq * hop;
 
-    auto freq_diverg = Utils::normalise(act_dphase - exp_dphase);
+    double freq_diverg = Utils::normalise(act_dphase - exp_dphase);
     // smth from calculus`
     double bin_diverg =
-        freq_diverg * (float)CHUNK_SIZE / (2.0 * M_PI) / (float)hop;
+        freq_diverg * (double)CHUNK_SIZE / (2.0 * M_PI) / (double)hop;
 
-    analysis[i].bin_freq = (float)i + bin_diverg;
+    analysis[i].bin_freq = (double)i + bin_diverg;
     analysis[i].magn = magn;
     lastPhases[i] = phase;
     bin_freq += bin_freq_step;
@@ -47,7 +48,7 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   // 2. MODIFYING
 
   for(int i = 0; i <= n_h; ++i){
-    synthesis[i] = {0.0f,0.0f};
+    synthesis[i] = {0.0,0.0};
   }
 
   float frac_bin = 0;
@@ -57,7 +58,6 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
     if (new_i > n_h) {
       break; // we can break, further values only get greater
     }
-
     synthesis[new_i].magn += analysis[i].magn;
     synthesis[new_i].bin_freq = analysis[i].bin_freq * koef;
     frac_bin += koef;
@@ -71,10 +71,10 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   for (int i = 0; i <= n_h; ++i) {
   
     auto bin_diverg = synthesis[i].bin_freq - (float)i;
-    float dphase = bin_diverg * 2.0 * M_PI * (float)hop / (float)CHUNK_SIZE;
+    double dphase = bin_diverg * 2.0 * M_PI * (float)hop / (float)CHUNK_SIZE;
     dphase += bin_freq * hop;
 
-    float act_phase = Utils::normalise(lastSynthPhases[i] + dphase);
+    double act_phase = Utils::normalise(lastSynthPhases[i] + dphase);
 
     new_freqs[i] = std::polar(synthesis[i].magn, act_phase);
     new_freqs[n - i] = std::conj(new_freqs[i]);
@@ -87,22 +87,33 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   freqs = std::move(new_freqs);
 }
 
-void Pitch::updateProperties() { koef = std::pow(2.0, (double)pitchShiftBox->value() / 1200); }
+void Pitch::updateProperties() { 
+  koef = std::pow(2.0, (double)pitchShiftBox->value() / 1200); 
+  // if(qualityBox->isChecked()){
+  //   CHUNK_SIZE = 1024;
+  //   HOP_SIZE = 256;
+  // } else {
+  //   CHUNK_SIZE = 4096;
+  //   HOP_SIZE = 256;
+  // }
+}
 
 void Pitch::setUpUi(QWidget *widget) {
-  BaseEffect::setUpUi(widget);
+  FFTProcessor::setUpUi(widget);
   pitchShiftBox = new QSpinBox();
-  pitchShiftBox->setMinimum(-2400);
+  pitchShiftBox->setMinimum(-2400); 
   pitchShiftBox->setMaximum(2400);
   pitchShiftBox->setValue(400);
   layout->addRow("Pitch shift (cents)", pitchShiftBox);
+
+  // qualityBox = new QCheckBox();
+  // qualityBox->setChecked(false);
+  // layout->addRow("Worse quality: ", qualityBox);
 }
 
 Pitch::Pitch()
-: FFTProcessor(2048, 512), lastSynthPhases(CHUNK_SIZE, 0.0), lastPhases(CHUNK_SIZE, 0.0),
+: FFTProcessor(1024, 128), lastSynthPhases(CHUNK_SIZE, 0.0), lastPhases(CHUNK_SIZE, 0.0),
      synthesis(CHUNK_SIZE/2 + 1, {0, 0}), analysis(CHUNK_SIZE/2 + 1, {0, 0}) {
-
-
       }
 
 void Pitch::reset() {

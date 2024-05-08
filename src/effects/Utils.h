@@ -75,7 +75,7 @@ private:
   }
 
 public:
-  static float normalise(float x) {
+  static double normalise(double x) {
     while (x > M_PI) {
       x -= 2.0f * M_PI;
     }

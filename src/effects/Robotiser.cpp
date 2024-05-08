@@ -4,7 +4,7 @@
 #include <cmath>
 
 
-Robotiser::Robotiser() : FFTProcessor(512, 256) {
+Robotiser::Robotiser() : FFTProcessor(512,  128) {
 }
 
 void Robotiser::processFftChunk(Utils::Frequencies& freqs) {

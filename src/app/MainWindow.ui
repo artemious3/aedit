@@ -142,16 +142,19 @@
      <rect>
       <x>160</x>
       <y>10</y>
-      <width>1156</width>
+      <width>1234</width>
       <height>51</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetFixedSize</enum>
      </property>
      <property name="leftMargin">
-      <number>300</number>
+      <number>100</number>
      </property>
      <property name="rightMargin">
       <number>300</number>
@@ -180,7 +183,7 @@
           </font>
          </property>
          <property name="text">
-          <string>--:--:--</string>
+          <string>--:--:--.---</string>
          </property>
         </widget>
        </item>
@@ -192,7 +195,7 @@
           </font>
          </property>
          <property name="text">
-          <string>--:--:--</string>
+          <string>--:--:--.---</string>
          </property>
         </widget>
        </item>
@@ -217,6 +220,12 @@
      </item>
      <item>
       <widget class="QLabel" name="loadingLbl">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -224,6 +233,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="playBtn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::TabFocus</enum>
        </property>
@@ -232,12 +247,18 @@
        </property>
        <property name="icon">
         <iconset theme="media-playback-start">
-         <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+         <normaloff>../../../../../../../../.designer/backup</normaloff>../../../../../../../../.designer/backup</iconset>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="pauseBtn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::TabFocus</enum>
        </property>
@@ -246,12 +267,18 @@
        </property>
        <property name="icon">
         <iconset theme="media-playback-pause">
-         <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+         <normaloff>../../../../../../../../.designer/backup</normaloff>../../../../../../../../.designer/backup</iconset>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="stopBtn">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="focusPolicy">
         <enum>Qt::TabFocus</enum>
        </property>
@@ -260,7 +287,7 @@
        </property>
        <property name="icon">
         <iconset theme="media-playback-stop">
-         <normaloff>../../../../../.designer/backup</normaloff>../../../../../.designer/backup</iconset>
+         <normaloff>../../../../../../../../.designer/backup</normaloff>../../../../../../../../.designer/backup</iconset>
        </property>
       </widget>
      </item>
@@ -277,7 +304,7 @@
         </font>
        </property>
        <property name="text">
-        <string>00:00:47</string>
+        <string>00:00:00.000</string>
        </property>
       </widget>
      </item>
@@ -297,9 +324,9 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>30</y>
+      <y>10</y>
       <width>151</width>
-      <height>27</height>
+      <height>31</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -318,6 +345,19 @@
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>40</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
   </widget>

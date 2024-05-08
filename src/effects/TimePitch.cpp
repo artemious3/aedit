@@ -101,6 +101,7 @@ void TimePitch::apply() {
     emit modifiedBuffer(beg, beg + size * koef, "TimePitch");
     //window->clearHistory();
     window->blockAudio(false);
+    window->clearHistory();
     finished = true;
   });
 }

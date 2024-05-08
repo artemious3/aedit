@@ -12,16 +12,18 @@ Chorus::Chorus() : FFTProcessor(){
 }
 
 void Chorus::processFftChunk(Utils::Frequencies& freqs) {
+    static float arg = 0.0f;
     std::random_device dev;
     std::mt19937 gen(dev());
-    std::uniform_real_distribution<> rnd(0.0,  M_PI);
+    std::uniform_real_distribution<> rnd(0.7,  1.0);
 
     for(int i = 0; i < freqs.size(); ++i){
-        auto ph =  std::atan2(freqs[i].imag(), freqs[i].real()) + rnd(gen);
-        auto ampl =  (double)std::abs(freqs[i]);
+        auto ph =  std::atan2(freqs[i].imag(), freqs[i].real());
+        auto ampl =  (float)std::abs(freqs[i]);
         auto c = std::polar(ampl, ph);
         freqs[i] = c;
     }
+    arg += 0.4;
 
     // for(int i = 0; i < freqs.size(); ++i){
     //     auto phi = std::atan2(freqs[i].imag(), freqs[i].real());

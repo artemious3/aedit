@@ -6,12 +6,18 @@
 #include <qcheckbox.h>
 #include <qspinbox.h>
 
+Pitch::Pitch()
+: FFTProcessor(4096, 1024), lastSynthPhases(CHUNK_SIZE, 0.0), lastPhases(CHUNK_SIZE, 0.0),
+     synthesis(CHUNK_SIZE/2 + 1, {0, 0}), analysis(CHUNK_SIZE/2 + 1, {0, 0}) {
+      }
+
+
 void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   auto n = CHUNK_SIZE;
   auto n_h = CHUNK_SIZE / 2;
   auto hop = HOP_SIZE;
 
-  Utils::Frequencies new_freqs(freqs.size());
+  Utils::Frequencies new_freqs(CHUNK_SIZE);
 
 
   // for(int i= 0; i < n_h; ++i){
@@ -35,29 +41,29 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
     double freq_diverg = Utils::normalise(act_dphase - exp_dphase);
     // smth from calculus`
     double bin_diverg =
-        freq_diverg * (double)CHUNK_SIZE / (2.0 * M_PI) / (double)hop;
+        freq_diverg * (double)CHUNK_SIZE / (2.0 * M_PI * hop);
 
     analysis[i].bin_freq = (double)i + bin_diverg;
     analysis[i].magn = magn;
     lastPhases[i] = phase;
     bin_freq += bin_freq_step;
   }
-
   CHECK_STOP
 
   // 2. MODIFYING
 
   for(int i = 0; i <= n_h; ++i){
-    synthesis[i] = {0.0,0.0};
+    synthesis[i] = {0.0, (float)i};
   }
 
   float frac_bin = 0;
   for (int i = 0; i <= n_h; ++i) {
-    int new_i = std::floor(frac_bin + 0.5f);
+    int new_i = std::round((float)i * koef);
 
     if (new_i > n_h) {
-      break; // we can break, further values only get greater
+      continue;; // we can break, further values only get greater
     }
+
     synthesis[new_i].magn += analysis[i].magn;
     synthesis[new_i].bin_freq = analysis[i].bin_freq * koef;
     frac_bin += koef;
@@ -71,7 +77,7 @@ void Pitch::processFftChunk(Utils::Frequencies &freqs) {
   for (int i = 0; i <= n_h; ++i) {
   
     auto bin_diverg = synthesis[i].bin_freq - (float)i;
-    double dphase = bin_diverg * 2.0 * M_PI * (float)hop / (float)CHUNK_SIZE;
+    double dphase = bin_diverg * 2.0 * M_PI * (float)hop  / (float)CHUNK_SIZE;
     dphase += bin_freq * hop;
 
     double act_phase = Utils::normalise(lastSynthPhases[i] + dphase);
@@ -111,14 +117,13 @@ void Pitch::setUpUi(QWidget *widget) {
   // layout->addRow("Worse quality: ", qualityBox);
 }
 
-Pitch::Pitch()
-: FFTProcessor(1024, 128), lastSynthPhases(CHUNK_SIZE, 0.0), lastPhases(CHUNK_SIZE, 0.0),
-     synthesis(CHUNK_SIZE/2 + 1, {0, 0}), analysis(CHUNK_SIZE/2 + 1, {0, 0}) {
-      }
 
 void Pitch::reset() {
-  for (int i = 0; i < CHUNK_SIZE; ++i) {
-    lastPhases[i] = 0.0;
-    lastSynthPhases[i] = 0.0;
+  qDebug() << "reset";
+  cnt = 0;
+  for (int i = 0; i < CHUNK_SIZE / 2; ++i) {
+    lastPhases[i] = 0;
+    lastSynthPhases[i] = 0;
+    synthesis[i] = {0.0, (float)i};
   }
 }

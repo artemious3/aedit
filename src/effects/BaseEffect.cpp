@@ -64,6 +64,7 @@ void BaseEffect::apply() {
   window->blockAudio(true);
 
   QThreadPool::globalInstance()->start([=] {
+    reset();
     _process(&buf.left[beg], size, max, 0);
     reset();
     _process(&buf.right[beg], size, max, 1);

@@ -17,10 +17,12 @@ struct ae_signal {
 class Pitch : public FFTProcessor{
 
     double koef = 1.4;
+    int cnt = 0;
     std::vector<double> lastPhases;
     std::vector<double> lastSynthPhases;
     std::vector<ae_signal> analysis;
     std::vector<ae_signal> synthesis;
+    bool first_time = true;
 
     QSpinBox* pitchShiftBox;
     QCheckBox* qualityBox;

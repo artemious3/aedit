@@ -6,6 +6,7 @@
 #include <qaudiodecoder.h>
 #include <qaudioformat.h>
 #include <qdebug.h>
+#include <qlogging.h>
 #include <qurl.h>
 
 Loader::Loader() {
@@ -30,6 +31,12 @@ void Loader::readBuffer() {
 }
 
 void Loader::finishReading() {
+
+  // qDebug() << "finished with buf size " << tmpBuffer.size();
+  if(tmpBuffer.size() == 0){
+    return;
+  }
+
   auto size = tmpBuffer.size();
   resulting_buffer.left = new Sample[size / 2 + 1];
   resulting_buffer.right = new Sample[size / 2 + 1];
@@ -52,15 +59,16 @@ void Loader::finishReading() {
 }
 
 void Loader::startDecoding(const QString &fname) {
+  decoder->stop();
+  tmpBuffer.clear();
 
   format.setSampleFormat(QAudioFormat::SampleFormat::Float);
   format.setSampleRate(ae::CoreAudio::SamplingFrequency);
   format.setChannelConfig(QAudioFormat::ChannelConfigStereo);
   decoder->setAudioFormat(format);
   decoder->setSource(fname);
-  decoder->start();
-
   tmpBuffer.reserve((double)decoder->duration() / 1000 * ae::CoreAudio::SamplingFrequency);
+  decoder->start();
 
 }
 

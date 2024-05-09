@@ -76,13 +76,11 @@ private:
 
 public:
   static double normalise(double x) {
-    while (x > M_PI) {
-      x -= 2.0f * M_PI;
+    if(x > 0.0){
+      return std::fmod(x + M_PI, 2.0 * M_PI) - M_PI;
+    } else {
+      return std::fmod(x - M_PI, 2.0 * M_PI) + M_PI;
     }
-    while (x < -M_PI) {
-      x += 2.0f * M_PI;
-    }
-    return x;
   }
 
   static std::vector<double> cosSumWindow(int win_size, int size,

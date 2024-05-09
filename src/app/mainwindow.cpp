@@ -75,6 +75,7 @@ MainWindow::~MainWindow() {
     QThread::msleep(100);
   }
 
+  CoreAudio::pause();
   CoreAudio::terminate();
   delete loader;
   delete ui;
@@ -83,8 +84,11 @@ MainWindow::~MainWindow() {
 void MainWindow::onError(QAudioDecoder::Error err) { qDebug() << "error!"; }
 
 void MainWindow::onBufReady() {
+  qDebug() << "buf ready!";
     CoreAudio::setBuffer(loader->getResultingBuffer());
     clearHistory();
+    tlScene->drawWaveform();
+    blockAudio(false);
 }
 
 
@@ -109,9 +113,9 @@ void ae::MainWindow::on_actionOpen_triggered() {
   if (fname.isEmpty()) {
     return;
   }
-
   loader->startDecoding(fname);
   ui->fnameLabel->setText(fname);
+  blockAudio(true);
 }
 
 
@@ -220,7 +224,6 @@ void ae::MainWindow::MainWindow::setTimeLabel(QString s) {
 void ae::MainWindow::MainWindow::clearHistory() {
     tlScene->resetEffects();
     ui->historyList->clear();
-    tlScene->drawWaveform();
 }
 
 void ae::MainWindow::MainWindow::blockAudio(bool b) {  

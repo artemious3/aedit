@@ -21,7 +21,7 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
 
   Sample *inBuf = new Sample[CHUNK_SIZE];
   Sample *outBuf = new Sample[CHUNK_SIZE];
-  Sample *resBuf = new Sample[size + CHUNK_SIZE];
+  Sample *resBuf = new Sample[size + CHUNK_SIZE + HOP_SIZE*2];
   for (int i = 0; i < size + CHUNK_SIZE; ++i) {
     resBuf[i] = 0;
   }
@@ -36,7 +36,7 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
   auto win =
       Utils::cosSumWindow(CHUNK_SIZE-1, CHUNK_SIZE);
 
-  for (int i = 0; i < size; i += hop) {
+  for (int i = -hop*2; i < size; i += hop) {
     auto curChunkSize = std::min(CHUNK_SIZE, max_range - i);
 
     for (int inb_i = 0, b_i = i; inb_i < curChunkSize; inb_i++, b_i++) {
@@ -55,7 +55,7 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
     CHECK_STOP
 
     for (int res_i = i, out_i = 0; out_i < curChunkSize; ++res_i, ++out_i) {
-      resBuf[res_i] +=  output_koef * outBuf[out_i] * win[out_i] / (float)CHUNK_SIZE ;
+      resBuf[res_i + hop*2] +=  output_koef *  outBuf[out_i] * win[out_i] / (float)CHUNK_SIZE ;
     }
 
     // updateEstimatedTime();
@@ -64,8 +64,8 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
 
   }
 
-  for (int i = 0; i < size; ++i) {
-    buf[i] = resBuf[i];
+  for (int i = hop*2; i < size; ++i) {
+    buf[i - hop*2] = resBuf[i];
   }
 
   // chunckTimer->invalidate();

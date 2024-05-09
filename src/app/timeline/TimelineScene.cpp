@@ -40,8 +40,10 @@ TimelineScene::~TimelineScene() {
 // }
 
 void TimelineScene::drawWaveform() {
-  removeItem(leftPixmap);
-  removeItem(rightPixmap);
+  if (leftPixmap)
+    removeItem(leftPixmap);
+  if (rightPixmap)
+    removeItem(rightPixmap);
   // removeItem(posPointer); posPointer = nullptr;
 
   viewWidth = views().first()->width();
@@ -58,6 +60,7 @@ void TimelineScene::drawWaveform() {
   AudioPixmap rightWaveform(buffer.right, buffer.size, viewWidth,
                             viewHeight / 2, RIGHT_WAVEFORM_COLOR);
 
+  
   leftPixmap = new QGraphicsPixmapItem(leftWaveform);
   rightPixmap = new QGraphicsPixmapItem(rightWaveform);
 
@@ -67,6 +70,8 @@ void TimelineScene::drawWaveform() {
   addItem(leftPixmap);
   addItem(rightPixmap);
 
+  // qDebug() << "l s " << leftPixmap->scene();
+  // qDebug() << "r s " << rightPixmap->scene();
   setSceneRect(0, 0, viewWidth, viewHeight);
 }
 
@@ -110,17 +115,16 @@ void TimelineScene::selectionPress(QGraphicsSceneMouseEvent *event) {
 }
 
 void TimelineScene::selectionMove(QGraphicsSceneMouseEvent *event) {
-  selectionEnd = std::min( std::max(0.0, event->scenePos().x()), width() );
+  selectionEnd = std::min(std::max(0.0, event->scenePos().x()), width());
   emit selectionChanged(selectionStart, selectionEnd);
   drawSelection();
 }
-
 
 void TimelineScene::navigate(QGraphicsSceneMouseEvent *event) {
   auto x = event->scenePos().x();
   qDebug() << x;
   auto buf_size = ae::CoreAudio::getBuffer().size;
-  int ind = ((double)x / leftPixmap->pixmap().width()) * buf_size;
+  int ind = ((double)x / width()) * buf_size;
   ae::CoreAudio::setCurrentIndex(ind);
   updatePosPointer();
 }
@@ -167,11 +171,11 @@ std::pair<int, int> TimelineScene::getSelection() const {
   if (beg > end) {
     std::swap(beg, end);
   }
-  if(beg < 0){
+  if (beg < 0) {
     beg = 0;
   }
-  if(end >= bufSize){
-    end = bufSize-1;
+  if (end >= bufSize) {
+    end = bufSize - 1;
   }
   qDebug() << "scene width" << width();
   qDebug() << "end: " << end;
@@ -229,6 +233,6 @@ void TimelineScene::resetEffects() {
   selectedEffect = nullptr;
 }
 
-const QColor& TimelineScene::getLastEffectColor() {
-  return effects.back()->brush().color();    
+const QColor &TimelineScene::getLastEffectColor() {
+  return effects.back()->brush().color();
 }

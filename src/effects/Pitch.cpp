@@ -7,7 +7,7 @@
 #include <qspinbox.h>
 
 Pitch::Pitch()
-: FFTProcessor(4096, 1024), lastSynthPhases(CHUNK_SIZE, 0.0), lastPhases(CHUNK_SIZE, 0.0),
+: FFTProcessor(1024, 128), lastSynthPhases(CHUNK_SIZE, 0.0), lastPhases(CHUNK_SIZE, 0.0),
      synthesis(CHUNK_SIZE/2 + 1, {0, 0}), analysis(CHUNK_SIZE/2 + 1, {0, 0}) {
       }
 

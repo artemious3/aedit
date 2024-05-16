@@ -59,6 +59,7 @@ namespace ae {
         void on_playBtn_clicked();
         void on_pauseBtn_clicked();
         void on_stopBtn_clicked();
+        void on_selAllBtn_clicked();
         // void on_gain_clicked();
 
         void on_effectsBox_textActivated(const QString& text);

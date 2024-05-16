@@ -68,6 +68,7 @@ public:
   // void setBuffer(StereoAudioBuffer buffer);
   void drawWaveform();
   void drawSelection();
+  void selectAll();
 
   const QColor& getLastEffectColor();
 

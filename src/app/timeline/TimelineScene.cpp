@@ -137,7 +137,7 @@ void TimelineScene::drawSelection() {
   }
 
   if (!selectionRect) {
-    selectionRect = addRect(left, -2, right - left, sceneRect().height() + 1,
+    selectionRect = addRect(left, 0, right - left, views().first()->height(),
                             QPen(Qt::gray, 1), SELECTION_COLOR);
   } else {
     selectionRect->setRect(left, 0, right - left, views().first()->height());
@@ -163,7 +163,7 @@ void TimelineScene::updatePosPointer() {
 }
 
 std::pair<int, int> TimelineScene::getSelection() const {
-  auto bufSize = ae::CoreAudio::getBuffer().size;
+  const auto bufSize = ae::CoreAudio::getBuffer().size;
   int samplesPerPx = bufSize / width();
 
   int beg = samplesPerPx * selectionStart;
@@ -235,4 +235,12 @@ void TimelineScene::resetEffects() {
 
 const QColor &TimelineScene::getLastEffectColor() {
   return effects.back()->brush().color();
+}
+
+void TimelineScene::selectAll() {
+  selectionStart = 0;
+  selectionEnd = views().first()->width();
+  emit selectionChanged(selectionStart, selectionEnd);
+  drawSelection();    
+  
 }

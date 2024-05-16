@@ -39,7 +39,7 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
 
   // chunckTimer->start();
 
-  for (int i = -hop * 2; i < size; i += hop) {
+  for (int i = 0; i < size; i += hop) {
     auto curChunkSize = std::min(CHUNK_SIZE, max_range - i);
 
     for (int inb_i = 0, b_i = i; inb_i < curChunkSize; inb_i++, b_i++) {
@@ -58,7 +58,7 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
     CHECK_STOP
 
     for (int res_i = i, out_i = 0; out_i < curChunkSize; ++res_i, ++out_i) {
-      resBuf[res_i + hop * 2] +=
+      resBuf[res_i] +=
           output_koef * outBuf[out_i] * win[out_i] / (float)CHUNK_SIZE;
     }
 
@@ -67,8 +67,8 @@ void FFTProcessor::_process(Sample *buf, int size, int max_range, short) {
     // --total_chunks;
   }
 
-  for (int i = hop * 2; i < size; ++i) {
-    buf[i - hop * 2] = resBuf[i];
+  for (int i = 0; i < size; ++i) {
+    buf[i] = resBuf[i];
   }
 
   // chunckTimer->invalidate();

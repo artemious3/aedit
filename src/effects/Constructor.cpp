@@ -19,7 +19,7 @@ BaseEffect* Constructor::getEffect(const std::string& name){
         effect->setObjectName("Gain");
     } else if(name == "Low/High-pass"){
         effect = new PassEQ{};
-        effect->setObjectName("low/High-pass");
+        effect->setObjectName("Low/High-pass");
     } else if(name == "Robotiser"){
         effect = new Robotiser{};
         effect->setObjectName("Robotiser");
@@ -27,7 +27,7 @@ BaseEffect* Constructor::getEffect(const std::string& name){
     // } else if(name == "Chorus"){
     //     effect = new Chorus{};
     //     effect->setObjectName("Chorus"); }
-     else if(name == "Pitch"){
+     else if(name == "Pitch") {
         effect = new Pitch{};
         effect->setObjectName("Pitch");
     } else if (name == "TimePitch"){

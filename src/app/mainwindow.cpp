@@ -100,6 +100,12 @@ void MainWindow::on_pauseBtn_clicked() { CoreAudio::pause(); }
 
 void MainWindow::on_stopBtn_clicked() { CoreAudio::stop(); }
 
+void MainWindow::on_selAllBtn_clicked(){
+  ui->selButton->toggle();
+  tlScene->selectAll();
+  
+}
+
 } // namespace ae
 
 void ae::MainWindow::on_actionOpen_triggered() {
@@ -108,7 +114,9 @@ void ae::MainWindow::on_actionOpen_triggered() {
   if (fname.isEmpty()) {
     return;
   }
+CoreAudio::stop();
   blockAudio(true);
+  ui->navButton->toggle(); // go into navigation mode
   loader->startDecoding(fname);
   ui->fnameLabel->setText(fname);
 }

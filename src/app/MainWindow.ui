@@ -99,11 +99,6 @@
        </item>
        <item>
         <property name="text">
-         <string>Chorus</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
          <string>Robotiser</string>
         </property>
        </item>
@@ -200,6 +195,13 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QPushButton" name="selAllBtn">
+       <property name="text">
+        <string>Select All</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QRadioButton" name="selButton">

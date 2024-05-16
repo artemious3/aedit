@@ -12,13 +12,18 @@
 Loader::Loader() {
   decoder = new QAudioDecoder(this);
   connect(decoder, &QAudioDecoder::bufferReady, this, &Loader::readBuffer);
-  connect(decoder, &QAudioDecoder::finished, this, &Loader::finishReading );
+  connect(decoder, QOverload<QAudioDecoder::Error>::of(&QAudioDecoder::error),
+          [=](QAudioDecoder::Error err) {
+            emit error(decoder->errorString());
+            decoder->stop();
+          });
+  connect(decoder, &QAudioDecoder::finished, this, &Loader::finishReading);
 }
 
 Loader::~Loader() { decoder->deleteLater(); }
 
 void Loader::readBuffer() {
-  
+
   auto buf = decoder->read();
   auto sz = buf.byteCount() / sizeof(Sample);
   auto ptr = buf.data<Sample>();
@@ -27,13 +32,13 @@ void Loader::readBuffer() {
     tmpBuffer.push_back(ptr[i]);
   }
 
-  //qDebug() << "dur: " << decoder->duration();
+  // qDebug() << "dur: " << decoder->duration();
 }
 
 void Loader::finishReading() {
 
   // qDebug() << "finished with buf size " << tmpBuffer.size();
-  if(tmpBuffer.size() == 0){
+  if (tmpBuffer.size() == 0) {
     return;
   }
 
@@ -41,7 +46,7 @@ void Loader::finishReading() {
   resulting_buffer.left = new Sample[size / 2 + 1];
   resulting_buffer.right = new Sample[size / 2 + 1];
   size_t core_i = 0;
-  for (size_t i = 0; i < size; ) {
+  for (size_t i = 0; i < size;) {
 
     resulting_buffer.left[core_i] = tmpBuffer[i];
     ++i;
@@ -67,9 +72,9 @@ void Loader::startDecoding(const QString &fname) {
   format.setChannelConfig(QAudioFormat::ChannelConfigStereo);
   decoder->setAudioFormat(format);
   decoder->setSource(fname);
-  tmpBuffer.reserve((double)decoder->duration() / 1000 * ae::CoreAudio::SamplingFrequency);
+  tmpBuffer.reserve((double)decoder->duration() / 1000 *
+                    ae::CoreAudio::SamplingFrequency);
   decoder->start();
-
 }
 
 StereoAudioBuffer Loader::getResultingBuffer() { return resulting_buffer; }

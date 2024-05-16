@@ -69,7 +69,7 @@ namespace ae {
 
         void on_selectionChanged(int beg, int end);
 
-        void onError(QAudioDecoder::Error err );
+        void onError(QString s );
 
         void onBufferChanged(int, int, QString);
 

@@ -13,12 +13,12 @@ Pitch::Pitch()
 
 
 void Pitch::processFftChunk(Utils::Frequencies &freqs) {
+  
   auto n = CHUNK_SIZE;
   auto n_h = CHUNK_SIZE / 2;
   auto hop = HOP_SIZE;
 
   Utils::Frequencies new_freqs(CHUNK_SIZE);
-
 
   // for(int i= 0; i < n_h; ++i){
   //   analysis[i] = {0.0, 0.0};

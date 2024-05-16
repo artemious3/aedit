@@ -28,6 +28,7 @@ public:
 
     signals:
         void onFinish();
+        void error(QString err_text);
 
     
 

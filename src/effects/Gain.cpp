@@ -3,6 +3,7 @@
 #include <qnamespace.h>
 #include <qslider.h>
 #include <qgridlayout.h>
+#include <qspinbox.h>
 #include <qwidget.h>
 #include <qlabel.h>
 #include <QGridLayout>
@@ -16,11 +17,12 @@ void Gain::_process(Sample* buf, int size, int max_out, short){
 
 void Gain::setUpUi(QWidget* widget){
     BaseEffect::setUpUi(widget);
-    _koefSlider = new QSlider(Qt::Horizontal);
-    layout->insertRow(0, "Gain", _koefSlider);
-    widget->show();
+    _dbBox = new QDoubleSpinBox;
+    _dbBox->setRange(0.0, 4.0);
+    _dbBox->setSingleStep(0.5);
+    layout->addRow("Gain (ratio)", _dbBox);
 }
 
 void Gain::updateProperties(){
-    _koef = ((double)_koefSlider->value() / _koefSlider->maximum()) * 2;
+    _koef = _dbBox->value();
 }

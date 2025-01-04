@@ -1,6 +1,23 @@
 # AEdit - a simple audio editor
 
-This project was made in order to get first experience in audio programming. It was also accepted as a course work on the 1st year of uni studies.
+This project was made in order to gain first experience in audio programming. 
+It utilizes some of key audio processing algorithms, most of which are based 
+on Fast Fourier Transform. It containts following audio effects:
+
+- Gain 
+
+- Pitch (fixed time) 
+
+- Pitch (no fixed time)
+
+- Reverb 
+
+- Robotiser 
+
+- Low/High-pass 
+
+
+![Screenshot](img/screenshot.png)
 
 ## Build
 
